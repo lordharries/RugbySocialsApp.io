@@ -18,6 +18,7 @@
     input[type=range]{-webkit-appearance:none;height:4px;border-radius:2px;background:rgba(255,255,255,0.15);outline:none}
     input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:#4ade80;cursor:pointer}
     textarea,input[type=text],input[type=email],input{font-family:inherit;font-size:16px}
+    select{font-size:16px}
     button{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
     ::-webkit-scrollbar{width:4px}
     ::-webkit-scrollbar-track{background:#0d1117}
@@ -126,6 +127,9 @@ function StatBlock({label,value,colors}){
   </div>;
 }
 
+// Sponsor bar height for padding calculations
+const SPONSOR_H = 34;
+
 function SponsorBar({sponsor, colors}) {
   if (!sponsor?.show || !sponsor?.name) return null;
   const isTop = sponsor.position === "top";
@@ -136,18 +140,24 @@ function SponsorBar({sponsor, colors}) {
       bottom: isTop ? "auto" : 0,
       left: 0, right: 0,
       zIndex: 5,
-      background: "rgba(0,0,0,0.55)",
-      backdropFilter: "blur(6px)",
+      background: "rgba(0,0,0,0.65)",
+      backdropFilter: "blur(8px)",
       borderTop: isTop ? "none" : `2px solid ${colors.secondary}`,
       borderBottom: isTop ? `2px solid ${colors.secondary}` : "none",
-      padding: "7px 16px",
-      textAlign: "center",
+      height: SPONSOR_H,
+      display: "flex", alignItems: "center", justifyContent: "center",
       pointerEvents: "none",
     }}>
       <span style={{fontSize:11,color:"rgba(255,255,255,0.75)",letterSpacing:1}}>Proudly sponsored by </span>
-      <span style={{fontSize:11,color:colors.secondary,fontWeight:700,letterSpacing:1}}>{sponsor.name}</span>
+      <span style={{fontSize:11,color:colors.secondary,fontWeight:700,letterSpacing:1,marginLeft:4}}>{sponsor.name}</span>
     </div>
   );
+}
+
+// Returns padding adjustments so card content never sits behind the sponsor bar
+function sponsorPad(sponsor) {
+  if (!sponsor?.show || !sponsor?.name) return {top:0, bottom:0};
+  return sponsor.position === "top" ? {top: SPONSOR_H} : {bottom: SPONSOR_H};
 }
 
 function FixtureCard1({data,colors,logo,font,photo,bgOpacity=1,bgBlur=0,dims,sponsor}){
@@ -158,7 +168,7 @@ function FixtureCard1({data,colors,logo,font,photo,bgOpacity=1,bgBlur=0,dims,spo
       <SponsorBar sponsor={sponsor} colors={colors}/>
       {!photo&&<div style={{position:"absolute",inset:0,background:`radial-gradient(circle at 80% 20%, ${secondary}33 0%, transparent 60%)`,zIndex:0}}/>}
       <div style={{position:"absolute",top:0,left:0,right:0,height:6,background:secondary,zIndex:3}}/>
-      <div style={{padding:"32px 40px",display:"flex",flexDirection:"column",height:"100%",boxSizing:"border-box",position:"relative",zIndex:3}}>
+      <div style={{padding:"32px 40px",paddingTop:`calc(32px + ${sponsorPad(sponsor).top}px)`,paddingBottom:`calc(32px + ${sponsorPad(sponsor).bottom}px)`,display:"flex",flexDirection:"column",height:"100%",boxSizing:"border-box",position:"relative",zIndex:3}}>
         {logo&&<img src={logo} style={{height:68,width:68,objectFit:"contain",marginBottom:16,filter:"drop-shadow(0 2px 12px rgba(0,0,0,0.6))"}}/>}
         <div style={{fontSize:12,letterSpacing:4,color:secondary,textTransform:"uppercase",marginBottom:8}}>Fixture Preview</div>
         <div style={{fontSize:38,fontWeight:700,color:"#fff",lineHeight:1.1,marginBottom:6,textShadow:"0 2px 12px rgba(0,0,0,0.7)"}}>{data.homeTeam||"Home Team"}</div>
@@ -186,7 +196,7 @@ function FixtureCard2({data,colors,logo,font,photo,bgOpacity=1,bgBlur=0,dims,spo
         <div style={{position:"absolute",top:0,right:0,bottom:0,width:"50%",background:"#111",zIndex:0}}/>
       </>}
       <div style={{position:"absolute",top:0,left:0,right:0,height:5,background:secondary,zIndex:3}}/>
-      <div style={{position:"relative",zIndex:3,padding:"32px 28px",display:"flex",flexDirection:"column",height:"100%",boxSizing:"border-box"}}>
+      <div style={{position:"relative",zIndex:3,padding:"32px 28px",paddingTop:`calc(32px + ${sponsorPad(sponsor).top}px)`,paddingBottom:`calc(32px + ${sponsorPad(sponsor).bottom}px)`,display:"flex",flexDirection:"column",height:"100%",boxSizing:"border-box"}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:24}}>
           {logo&&<img src={logo} style={{height:56,width:56,objectFit:"contain",filter:"drop-shadow(0 2px 12px rgba(0,0,0,0.7))"}}/>}
           <div style={{fontSize:11,letterSpacing:4,color:secondary,textTransform:"uppercase"}}>Fixture</div>
@@ -257,7 +267,7 @@ function ResultCardBase({data,colors,logo,font,variant,photo,bgOpacity=1,bgBlur=
       <SponsorBar sponsor={sponsor} colors={colors}/>
       {!photo&&<div style={{position:"absolute",inset:0,background:`linear-gradient(180deg, ${primary} 0%, #0d0d0d 60%)`,zIndex:0}}/>}
       <div style={{position:"absolute",top:0,left:0,right:0,height:5,background:rc,zIndex:3}}/>
-      <div style={{padding:"28px 32px",display:"flex",flexDirection:"column",height:"100%",boxSizing:"border-box",position:"relative",zIndex:3}}>
+      <div style={{padding:"28px 32px",paddingTop:`calc(28px + ${sponsorPad(sponsor).top}px)`,paddingBottom:`calc(28px + ${sponsorPad(sponsor).bottom}px)`,display:"flex",flexDirection:"column",height:"100%",boxSizing:"border-box",position:"relative",zIndex:3}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20}}>
           {logo&&<img src={logo} style={{height:50,width:50,objectFit:"contain",filter:"drop-shadow(0 2px 12px rgba(0,0,0,0.7))"}}/>}
           <div style={{background:rc,color:"#000",padding:"5px 18px",borderRadius:4,fontSize:13,fontWeight:800,letterSpacing:3,textTransform:"uppercase"}}>{label}</div>
@@ -285,7 +295,7 @@ function ResultCardBase({data,colors,logo,font,variant,photo,bgOpacity=1,bgBlur=
         <div style={{position:"absolute",left:0,top:0,bottom:0,width:200,background:`${secondary}18`,zIndex:0}}/>
       </>}
       <div style={{position:"absolute",left:0,top:0,bottom:0,width:5,background:secondary,zIndex:3}}/>
-      <div style={{padding:"28px 32px",display:"flex",flexDirection:"column",height:"100%",boxSizing:"border-box",position:"relative",zIndex:3}}>
+      <div style={{padding:"28px 32px",paddingTop:`calc(28px + ${sponsorPad(sponsor).top}px)`,paddingBottom:`calc(28px + ${sponsorPad(sponsor).bottom}px)`,display:"flex",flexDirection:"column",height:"100%",boxSizing:"border-box",position:"relative",zIndex:3}}>
         <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:16}}>
           <div style={{fontSize:10,letterSpacing:4,color:secondary,textTransform:"uppercase"}}>Match Result</div>
           {logo&&<img src={logo} style={{height:46,width:46,objectFit:"contain",filter:"drop-shadow(0 2px 12px rgba(0,0,0,0.7))"}}/>}
@@ -320,7 +330,7 @@ function ResultCardBase({data,colors,logo,font,variant,photo,bgOpacity=1,bgBlur=
       <SponsorBar sponsor={sponsor} colors={colors}/>
       {!photo&&<div style={{position:"absolute",inset:0,background:`linear-gradient(135deg, ${secondary}22 0%, transparent 50%)`,zIndex:0}}/>}
       <div style={{position:"absolute",top:0,left:0,right:0,height:6,background:secondary,zIndex:3}}/>
-      <div style={{padding:"28px 36px",display:"flex",flexDirection:"column",height:"100%",boxSizing:"border-box",position:"relative",zIndex:3}}>
+      <div style={{padding:"28px 36px",paddingTop:`calc(28px + ${sponsorPad(sponsor).top}px)`,paddingBottom:`calc(28px + ${sponsorPad(sponsor).bottom}px)`,display:"flex",flexDirection:"column",height:"100%",boxSizing:"border-box",position:"relative",zIndex:3}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:18}}>
           {logo&&<img src={logo} style={{height:52,width:52,objectFit:"contain",filter:"drop-shadow(0 2px 12px rgba(0,0,0,0.7))"}}/>}
           <div style={{background:rc,color:"#000",padding:"4px 16px",borderRadius:20,fontSize:12,fontWeight:700,letterSpacing:2,textTransform:"uppercase"}}>{label}</div>
@@ -356,20 +366,20 @@ function PlayerCard1({data,colors,logo,font,photo,bgOpacity=1,bgBlur=0,dims,spon
       <SponsorBar sponsor={sponsor} colors={colors}/>
       {!photo&&<div style={{position:"absolute",inset:0,background:`radial-gradient(circle at 80% 20%, ${secondary}33 0%, transparent 60%)`,zIndex:0}}/>}
       <div style={{position:"absolute",top:0,left:0,right:0,height:5,background:secondary,zIndex:3}}/>
-      <div style={{padding:"28px 36px",display:"flex",flexDirection:"column",height:"100%",boxSizing:"border-box",position:"relative",zIndex:3}}>
+      <div style={{padding:"28px 36px",paddingTop:`calc(28px + ${sponsorPad(sponsor).top}px)`,paddingBottom:`calc(28px + ${sponsorPad(sponsor).bottom}px)`,display:"flex",flexDirection:"column",height:"100%",boxSizing:"border-box",position:"relative",zIndex:3}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
           {logo&&<img src={logo} style={{height:56,width:56,objectFit:"contain",filter:"drop-shadow(0 2px 12px rgba(0,0,0,0.7))"}}/>}
           <div style={{fontSize:11,letterSpacing:4,color:secondary,textTransform:"uppercase"}}>Player Spotlight</div>
         </div>
         <div style={{marginTop:"auto"}}>
-          {data.shirtNumber&&<div style={{fontSize:72,fontWeight:900,color:`${secondary}55`,lineHeight:1,marginBottom:-10,fontFamily:"monospace"}}>{data.shirtNumber}</div>}
-          <div style={{fontSize:40,fontWeight:800,color:"#fff",lineHeight:1.05,textShadow:"0 2px 12px rgba(0,0,0,0.8)",marginBottom:3}}>{data.playerName||"Player Name"}</div>
+          <div style={{display:"flex",alignItems:"baseline",gap:10,marginBottom:3}}>
+            {data.flag&&<span style={{fontSize:32}}>{data.flag}</span>}
+            <div style={{fontSize:40,fontWeight:800,color:"#fff",lineHeight:1.05,textShadow:"0 2px 12px rgba(0,0,0,0.8)"}}>{data.playerName||"Player Name"}</div>
+          </div>
           <div style={{fontSize:16,color:secondary,letterSpacing:2,marginBottom:16}}>{data.position||"Position"}</div>
           <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:data.quote?12:0}}>
             {data.caps&&<StatBlock label="Club Caps" value={data.caps} colors={colors}/>}
             {data.tries&&<StatBlock label="Tries" value={data.tries} colors={colors}/>}
-            {data.age&&<StatBlock label="Age" value={data.age} colors={colors}/>}
-            {data.hometown&&<StatBlock label="Hometown" value={data.hometown} colors={colors}/>}
           </div>
           {data.quote&&<div style={{background:"rgba(0,0,0,0.5)",backdropFilter:"blur(4px)",borderRadius:8,padding:"10px 14px",borderLeft:`3px solid ${secondary}`}}><div style={{color:"#fff",fontSize:12,fontStyle:"italic",lineHeight:1.5}}>"{data.quote}"</div></div>}
         </div>
@@ -385,17 +395,19 @@ function PlayerCard2({data,colors,logo,font,photo,bgOpacity=1,bgBlur=0,dims,spon
       <BgPhoto photo={photo} primary={primary} opacity={bgOpacity} blur={bgBlur}/>
       <SponsorBar sponsor={sponsor} colors={colors}/>
       {!photo&&<div style={{position:"absolute",inset:0,background:`linear-gradient(135deg, ${primary} 0%, #1a1a1a 100%)`,zIndex:0}}/>}
-      <div style={{padding:"28px 28px 24px",display:"flex",flexDirection:"column",height:"100%",boxSizing:"border-box",position:"relative",zIndex:3,justifyContent:"flex-end"}}>
+      <div style={{padding:"28px 28px 24px",paddingTop:`calc(28px + ${sponsorPad(sponsor).top}px)`,paddingBottom:`calc(24px + ${sponsorPad(sponsor).bottom}px)`,display:"flex",flexDirection:"column",height:"100%",boxSizing:"border-box",position:"relative",zIndex:3,justifyContent:"flex-end"}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-end",marginBottom:12}}>
           <div>
-            {data.shirtNumber&&<div style={{fontSize:56,fontWeight:900,color:secondary,lineHeight:1,fontFamily:"monospace",marginBottom:-4}}>{data.shirtNumber}</div>}
-            <div style={{fontSize:34,fontWeight:800,color:"#fff",lineHeight:1,textShadow:"0 2px 12px rgba(0,0,0,0.8)"}}>{data.playerName||"Player Name"}</div>
+            <div style={{display:"flex",alignItems:"baseline",gap:8}}>
+              {data.flag&&<span style={{fontSize:28}}>{data.flag}</span>}
+              <div style={{fontSize:34,fontWeight:800,color:"#fff",lineHeight:1,textShadow:"0 2px 12px rgba(0,0,0,0.8)"}}>{data.playerName||"Player Name"}</div>
+            </div>
             <div style={{fontSize:14,color:secondary,letterSpacing:2,marginTop:3}}>{data.position||"Position"}</div>
           </div>
           {logo&&<img src={logo} style={{height:52,width:52,objectFit:"contain",filter:"drop-shadow(0 2px 12px rgba(0,0,0,0.8))"}}/>}
         </div>
-        <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:6}}>
-          {[data.caps&&{l:"Caps",v:data.caps},data.tries&&{l:"Tries",v:data.tries},data.age&&{l:"Age",v:data.age},data.hometown&&{l:"Town",v:data.hometown}].filter(Boolean).map((s,i)=>(
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:6}}>
+          {[data.caps&&{l:"Caps",v:data.caps},data.tries&&{l:"Tries",v:data.tries}].filter(Boolean).map((s,i)=>(
             <div key={i} style={{background:"rgba(0,0,0,0.5)",backdropFilter:"blur(4px)",borderRadius:6,padding:"7px 8px",textAlign:"center",border:"1px solid rgba(255,255,255,0.08)"}}>
               <div style={{fontSize:9,color:secondary,letterSpacing:1,textTransform:"uppercase"}}>{s.l}</div>
               <div style={{fontSize:12,color:"#fff",fontWeight:700,marginTop:2}}>{s.v}</div>
@@ -416,20 +428,20 @@ function PlayerCard3({data,colors,logo,font,photo,bgOpacity=1,bgBlur=0,dims,spon
       <SponsorBar sponsor={sponsor} colors={colors}/>
       {!photo&&<div style={{position:"absolute",right:-40,top:-40,width:300,height:300,borderRadius:"50%",background:`${secondary}18`,zIndex:0}}/>}
       <div style={{position:"absolute",top:0,left:0,right:0,height:5,background:secondary,zIndex:3}}/>
-      <div style={{padding:"28px 32px",display:"flex",flexDirection:"column",height:"100%",boxSizing:"border-box",position:"relative",zIndex:3}}>
+      <div style={{padding:"28px 32px",paddingTop:`calc(28px + ${sponsorPad(sponsor).top}px)`,paddingBottom:`calc(28px + ${sponsorPad(sponsor).bottom}px)`,display:"flex",flexDirection:"column",height:"100%",boxSizing:"border-box",position:"relative",zIndex:3}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"auto"}}>
           {logo&&<img src={logo} style={{height:52,width:52,objectFit:"contain",filter:"drop-shadow(0 2px 12px rgba(0,0,0,0.7))"}}/>}
         </div>
         <div style={{marginBottom:8}}>
           <div style={{fontSize:11,letterSpacing:4,color:secondary,textTransform:"uppercase",marginBottom:10}}>Player Spotlight</div>
-          {data.shirtNumber&&<div style={{fontSize:64,fontWeight:900,color:`${secondary}44`,lineHeight:1,marginBottom:-8,fontFamily:"monospace"}}>{data.shirtNumber}</div>}
-          <div style={{fontSize:32,fontWeight:800,color:"#fff",lineHeight:1.05,marginBottom:3,textShadow:"0 2px 12px rgba(0,0,0,0.8)"}}>{data.playerName||"Player Name"}</div>
+          <div style={{display:"flex",alignItems:"baseline",gap:10,marginBottom:3}}>
+            {data.flag&&<span style={{fontSize:28}}>{data.flag}</span>}
+            <div style={{fontSize:32,fontWeight:800,color:"#fff",lineHeight:1.05,textShadow:"0 2px 12px rgba(0,0,0,0.8)"}}>{data.playerName||"Player Name"}</div>
+          </div>
           <div style={{fontSize:14,color:secondary,letterSpacing:2,marginBottom:14}}>{data.position||"Position"}</div>
           <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:10}}>
             {data.caps&&<StatBlock label="Caps" value={data.caps} colors={colors}/>}
             {data.tries&&<StatBlock label="Tries" value={data.tries} colors={colors}/>}
-            {data.age&&<StatBlock label="Age" value={data.age} colors={colors}/>}
-            {data.hometown&&<StatBlock label="Town" value={data.hometown} colors={colors}/>}
           </div>
           {data.quote&&<div style={{background:"rgba(0,0,0,0.5)",backdropFilter:"blur(4px)",borderRadius:8,padding:"10px 12px",borderLeft:`3px solid ${secondary}`}}><div style={{color:"#fff",fontSize:11,fontStyle:"italic",lineHeight:1.5}}>"{data.quote}"</div></div>}
         </div>
@@ -441,7 +453,7 @@ function PlayerCard3({data,colors,logo,font,photo,bgOpacity=1,bgBlur=0,dims,spon
 // ── AWARD CARDS (MOTM + DOTD) ────────────────────────────────────
 // Shared card component. Pass `colors` already swapped for DOTD.
 
-function AwardCard1({data,awardLabel,colors,logo,font,photo,bgOpacity=1,bgBlur=0,dims,sponsor}){
+function AwardCard1({data,awardLabel,colors,logo,font,photo,bgOpacity=1,bgBlur=0,dims,sponsor,clubName}){
   const {primary,secondary}=colors;
   return(
     <div style={{width:dims.w,height:dims.h,background:primary,position:"relative",fontFamily:font,overflow:"hidden",borderRadius:12}}>
@@ -449,20 +461,21 @@ function AwardCard1({data,awardLabel,colors,logo,font,photo,bgOpacity=1,bgBlur=0
       <SponsorBar sponsor={sponsor} colors={colors}/>
       {!photo&&<div style={{position:"absolute",inset:0,background:`radial-gradient(circle at 80% 20%, ${secondary}33 0%, transparent 60%)`,zIndex:0}}/>}
       <div style={{position:"absolute",top:0,left:0,right:0,height:5,background:secondary,zIndex:3}}/>
-      <div style={{padding:"28px 36px",display:"flex",flexDirection:"column",height:"100%",boxSizing:"border-box",position:"relative",zIndex:3}}>
+      <div style={{padding:"28px 36px",paddingTop:`calc(28px + ${sponsorPad(sponsor).top}px)`,paddingBottom:`calc(28px + ${sponsorPad(sponsor).bottom}px)`,display:"flex",flexDirection:"column",height:"100%",boxSizing:"border-box",position:"relative",zIndex:3}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
           {logo&&<img src={logo} style={{height:56,width:56,objectFit:"contain",filter:"drop-shadow(0 2px 12px rgba(0,0,0,0.7))"}}/>}
         </div>
         <div style={{marginTop:"auto"}}>
           <div style={{fontSize:34,fontWeight:900,color:"#fff",lineHeight:1,textTransform:"uppercase",letterSpacing:-0.5,marginBottom:6,textShadow:"0 2px 12px rgba(0,0,0,0.8)"}}>{awardLabel}</div>
-          {data.shirtNumber&&<div style={{fontSize:72,fontWeight:900,color:`${secondary}55`,lineHeight:1,marginBottom:-10,fontFamily:"monospace"}}>{data.shirtNumber}</div>}
-          <div style={{fontSize:40,fontWeight:800,color:"#fff",lineHeight:1.05,textShadow:"0 2px 12px rgba(0,0,0,0.8)",marginBottom:3}}>{data.playerName||"Player Name"}</div>
-          <div style={{fontSize:16,color:secondary,letterSpacing:2,marginBottom:16}}>{data.position||"Position"}</div>
+          <div style={{display:"flex",alignItems:"baseline",gap:10,marginBottom:3}}>
+            {data.flag&&<span style={{fontSize:32}}>{data.flag}</span>}
+            <div style={{fontSize:40,fontWeight:800,color:"#fff",lineHeight:1.05,textShadow:"0 2px 12px rgba(0,0,0,0.8)"}}>{data.playerName||"Player Name"}</div>
+          </div>
+          <div style={{fontSize:16,color:secondary,letterSpacing:2,marginBottom:clubName?4:16}}>{data.position||"Position"}</div>
+          {clubName&&<div style={{fontSize:12,color:"rgba(255,255,255,0.5)",letterSpacing:2,textTransform:"uppercase",marginBottom:16}}>{clubName}</div>}
           <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:data.reason?12:0}}>
             {data.caps&&<StatBlock label="Club Caps" value={data.caps} colors={colors}/>}
             {data.tries&&<StatBlock label="Tries" value={data.tries} colors={colors}/>}
-            {data.age&&<StatBlock label="Age" value={data.age} colors={colors}/>}
-            {data.hometown&&<StatBlock label="Hometown" value={data.hometown} colors={colors}/>}
           </div>
           {data.reason&&<div style={{background:"rgba(0,0,0,0.5)",backdropFilter:"blur(4px)",borderRadius:8,padding:"10px 14px",borderLeft:`3px solid ${secondary}`}}><div style={{color:"#fff",fontSize:12,fontStyle:"italic",lineHeight:1.5}}>"{data.reason}"</div></div>}
         </div>
@@ -471,25 +484,28 @@ function AwardCard1({data,awardLabel,colors,logo,font,photo,bgOpacity=1,bgBlur=0
   );
 }
 
-function AwardCard2({data,awardLabel,colors,logo,font,photo,bgOpacity=1,bgBlur=0,dims,sponsor}){
+function AwardCard2({data,awardLabel,colors,logo,font,photo,bgOpacity=1,bgBlur=0,dims,sponsor,clubName}){
   const {primary,secondary}=colors;
   return(
     <div style={{width:dims.w,height:dims.h,background:"#0d0d0d",position:"relative",fontFamily:font,overflow:"hidden",borderRadius:12}}>
       <BgPhoto photo={photo} primary={primary} opacity={bgOpacity} blur={bgBlur}/>
       <SponsorBar sponsor={sponsor} colors={colors}/>
       {!photo&&<div style={{position:"absolute",inset:0,background:`linear-gradient(135deg, ${primary} 0%, #1a1a1a 100%)`,zIndex:0}}/>}
-      <div style={{padding:"28px 28px 24px",display:"flex",flexDirection:"column",height:"100%",boxSizing:"border-box",position:"relative",zIndex:3,justifyContent:"flex-end"}}>
+      <div style={{padding:"28px 28px 24px",paddingTop:`calc(28px + ${sponsorPad(sponsor).top}px)`,paddingBottom:`calc(24px + ${sponsorPad(sponsor).bottom}px)`,display:"flex",flexDirection:"column",height:"100%",boxSizing:"border-box",position:"relative",zIndex:3,justifyContent:"flex-end"}}>
         <div style={{fontSize:34,fontWeight:900,color:"#fff",lineHeight:1,textTransform:"uppercase",letterSpacing:-0.5,marginBottom:10,textShadow:"0 2px 12px rgba(0,0,0,0.8)"}}>{awardLabel}</div>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-end",marginBottom:12}}>
           <div>
-            {data.shirtNumber&&<div style={{fontSize:56,fontWeight:900,color:secondary,lineHeight:1,fontFamily:"monospace",marginBottom:-4}}>{data.shirtNumber}</div>}
-            <div style={{fontSize:34,fontWeight:800,color:"#fff",lineHeight:1,textShadow:"0 2px 12px rgba(0,0,0,0.8)"}}>{data.playerName||"Player Name"}</div>
+            <div style={{display:"flex",alignItems:"baseline",gap:8}}>
+              {data.flag&&<span style={{fontSize:28}}>{data.flag}</span>}
+              <div style={{fontSize:34,fontWeight:800,color:"#fff",lineHeight:1,textShadow:"0 2px 12px rgba(0,0,0,0.8)"}}>{data.playerName||"Player Name"}</div>
+            </div>
             <div style={{fontSize:14,color:secondary,letterSpacing:2,marginTop:3}}>{data.position||"Position"}</div>
+            {clubName&&<div style={{fontSize:11,color:"rgba(255,255,255,0.45)",letterSpacing:2,textTransform:"uppercase",marginTop:2}}>{clubName}</div>}
           </div>
           {logo&&<img src={logo} style={{height:52,width:52,objectFit:"contain",filter:"drop-shadow(0 2px 12px rgba(0,0,0,0.8))"}}/>}
         </div>
-        <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:6}}>
-          {[data.caps&&{l:"Caps",v:data.caps},data.tries&&{l:"Tries",v:data.tries},data.age&&{l:"Age",v:data.age},data.hometown&&{l:"Town",v:data.hometown}].filter(Boolean).map((s,i)=>(
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:6}}>
+          {[data.caps&&{l:"Caps",v:data.caps},data.tries&&{l:"Tries",v:data.tries}].filter(Boolean).map((s,i)=>(
             <div key={i} style={{background:"rgba(0,0,0,0.5)",backdropFilter:"blur(4px)",borderRadius:6,padding:"7px 8px",textAlign:"center",border:"1px solid rgba(255,255,255,0.08)"}}>
               <div style={{fontSize:9,color:secondary,letterSpacing:1,textTransform:"uppercase"}}>{s.l}</div>
               <div style={{fontSize:12,color:"#fff",fontWeight:700,marginTop:2}}>{s.v}</div>
@@ -502,7 +518,7 @@ function AwardCard2({data,awardLabel,colors,logo,font,photo,bgOpacity=1,bgBlur=0
   );
 }
 
-function AwardCard3({data,awardLabel,colors,logo,font,photo,bgOpacity=1,bgBlur=0,dims,sponsor}){
+function AwardCard3({data,awardLabel,colors,logo,font,photo,bgOpacity=1,bgBlur=0,dims,sponsor,clubName}){
   const {primary,secondary}=colors;
   return(
     <div style={{width:dims.w,height:dims.h,background:primary,position:"relative",fontFamily:font,overflow:"hidden",borderRadius:12}}>
@@ -510,20 +526,21 @@ function AwardCard3({data,awardLabel,colors,logo,font,photo,bgOpacity=1,bgBlur=0
       <SponsorBar sponsor={sponsor} colors={colors}/>
       {!photo&&<div style={{position:"absolute",right:-40,top:-40,width:300,height:300,borderRadius:"50%",background:`${secondary}18`,zIndex:0}}/>}
       <div style={{position:"absolute",top:0,left:0,right:0,height:5,background:secondary,zIndex:3}}/>
-      <div style={{padding:"28px 32px",display:"flex",flexDirection:"column",height:"100%",boxSizing:"border-box",position:"relative",zIndex:3}}>
+      <div style={{padding:"28px 32px",paddingTop:`calc(28px + ${sponsorPad(sponsor).top}px)`,paddingBottom:`calc(28px + ${sponsorPad(sponsor).bottom}px)`,display:"flex",flexDirection:"column",height:"100%",boxSizing:"border-box",position:"relative",zIndex:3}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"auto"}}>
           {logo&&<img src={logo} style={{height:52,width:52,objectFit:"contain",filter:"drop-shadow(0 2px 12px rgba(0,0,0,0.7))"}}/>}
         </div>
         <div style={{marginBottom:8}}>
           <div style={{fontSize:34,fontWeight:900,color:"#fff",lineHeight:1,textTransform:"uppercase",letterSpacing:-0.5,marginBottom:10,textShadow:"0 2px 12px rgba(0,0,0,0.8)"}}>{awardLabel}</div>
-          {data.shirtNumber&&<div style={{fontSize:64,fontWeight:900,color:`${secondary}44`,lineHeight:1,marginBottom:-8,fontFamily:"monospace"}}>{data.shirtNumber}</div>}
-          <div style={{fontSize:32,fontWeight:800,color:"#fff",lineHeight:1.05,marginBottom:3,textShadow:"0 2px 12px rgba(0,0,0,0.8)"}}>{data.playerName||"Player Name"}</div>
-          <div style={{fontSize:14,color:secondary,letterSpacing:2,marginBottom:14}}>{data.position||"Position"}</div>
+          <div style={{display:"flex",alignItems:"baseline",gap:10,marginBottom:3}}>
+            {data.flag&&<span style={{fontSize:28}}>{data.flag}</span>}
+            <div style={{fontSize:32,fontWeight:800,color:"#fff",lineHeight:1.05,textShadow:"0 2px 12px rgba(0,0,0,0.8)"}}>{data.playerName||"Player Name"}</div>
+          </div>
+          <div style={{fontSize:14,color:secondary,letterSpacing:2,marginBottom:clubName?4:14}}>{data.position||"Position"}</div>
+          {clubName&&<div style={{fontSize:11,color:"rgba(255,255,255,0.45)",letterSpacing:2,textTransform:"uppercase",marginBottom:14}}>{clubName}</div>}
           <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:10}}>
             {data.caps&&<StatBlock label="Caps" value={data.caps} colors={colors}/>}
             {data.tries&&<StatBlock label="Tries" value={data.tries} colors={colors}/>}
-            {data.age&&<StatBlock label="Age" value={data.age} colors={colors}/>}
-            {data.hometown&&<StatBlock label="Town" value={data.hometown} colors={colors}/>}
           </div>
           {data.reason&&<div style={{background:"rgba(0,0,0,0.5)",backdropFilter:"blur(4px)",borderRadius:8,padding:"10px 12px",borderLeft:`3px solid ${secondary}`}}><div style={{color:"#fff",fontSize:11,fontStyle:"italic",lineHeight:1.5}}>"{data.reason}"</div></div>}
         </div>
@@ -532,7 +549,7 @@ function AwardCard3({data,awardLabel,colors,logo,font,photo,bgOpacity=1,bgBlur=0
   );
 }
 
-function TeamAnnouncementCard({data,colors,logo,font,variant,photo,bgOpacity=1,bgBlur=0,dims,sponsor}){
+function TeamAnnouncementCard({data,colors,logo,font,variant,photo,bgOpacity=1,bgBlur=0,dims,sponsor,clubName}){
   const {primary,secondary}=colors; const txt=ctxt(primary); const txtS=ctxt(secondary);
   const starters=data.players.slice(0,15);
   const reps=data.players.slice(15,23).filter(p=>p.name);
@@ -574,9 +591,13 @@ function TeamAnnouncementCard({data,colors,logo,font,variant,photo,bgOpacity=1,b
           <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}>
             <div>
               <div style={{fontSize:32,fontWeight:900,color:"#fff",lineHeight:1,textTransform:"uppercase",textShadow:"0 2px 8px rgba(0,0,0,0.8)"}}>Starting <span style={{color:secondary}}>XV</span></div>
-              <div style={{fontSize:11,color:"#ccc",opacity:0.7,marginTop:2}}>{data.teamName&&<span style={{fontWeight:600,opacity:1,color:"#fff"}}>{data.teamName} </span>}{data.opponent&&`vs ${data.opponent}`}{data.date&&` · ${data.date}`}</div>
+              {clubName&&<div style={{fontSize:13,color:secondary,fontWeight:700,marginTop:2,letterSpacing:0.5}}>{clubName}</div>}
             </div>
-            {logo&&<img src={logo} style={{height:52,width:52,objectFit:"contain",filter:"drop-shadow(0 2px 12px rgba(0,0,0,0.8))"}}/>}
+            <div style={{textAlign:"right",display:"flex",flexDirection:"column",alignItems:"flex-end",gap:3}}>
+              {logo&&<img src={logo} style={{height:44,width:44,objectFit:"contain",filter:"drop-shadow(0 2px 12px rgba(0,0,0,0.8))",marginBottom:4}}/>}
+              {data.opponent&&<div style={{fontSize:13,color:"#fff",fontWeight:600}}>{data.isHome?"vs":"@ "}{data.opponent}</div>}
+              {data.date&&<div style={{fontSize:11,color:"#aaa",opacity:0.8}}>{data.date}</div>}
+            </div>
           </div>
           <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"4px 8px",flex:1}}>
             {starters.map((p,i)=><PlayerRow key={i} p={p} i={i} slim/>)}
@@ -597,9 +618,13 @@ function TeamAnnouncementCard({data,colors,logo,font,variant,photo,bgOpacity=1,b
           <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:14}}>
             <div>
               <div style={{fontSize:38,fontWeight:900,color:"#fff",lineHeight:1,letterSpacing:-1,textTransform:"uppercase",textShadow:"0 2px 8px rgba(0,0,0,0.8)"}}>Starting <span style={{color:secondary}}>XV</span></div>
-              {(data.teamName||data.opponent||data.date)&&<div style={{fontSize:12,color:"#666",marginTop:3}}>{data.teamName&&<span style={{color:"#aaa",fontWeight:600}}>{data.teamName} </span>}{data.opponent&&`vs ${data.opponent}`}{data.date&&` · ${data.date}`}</div>}
+              {clubName&&<div style={{fontSize:13,color:secondary,fontWeight:700,marginTop:3,letterSpacing:0.5}}>{clubName}</div>}
             </div>
-            {logo&&<img src={logo} style={{height:54,width:54,objectFit:"contain",filter:"drop-shadow(0 2px 12px rgba(0,0,0,0.8))"}}/>}
+            <div style={{textAlign:"right",display:"flex",flexDirection:"column",alignItems:"flex-end",gap:3}}>
+              {logo&&<img src={logo} style={{height:46,width:46,objectFit:"contain",filter:"drop-shadow(0 2px 12px rgba(0,0,0,0.8))",marginBottom:4}}/>}
+              {data.opponent&&<div style={{fontSize:13,color:"#fff",fontWeight:600}}>{data.isHome?"vs":"@ "}{data.opponent}</div>}
+              {data.date&&<div style={{fontSize:11,color:"#888"}}>{data.date}</div>}
+            </div>
           </div>
           <div style={{display:"flex",flexDirection:"column",gap:3,flex:1}}>
             {starters.map((p,i)=>{
@@ -635,9 +660,13 @@ function TeamAnnouncementCard({data,colors,logo,font,variant,photo,bgOpacity=1,b
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:10}}>
           <div>
             <div style={{fontSize:38,fontWeight:900,color:"#fff",lineHeight:1,letterSpacing:-1,textTransform:"uppercase",textShadow:"0 2px 8px rgba(0,0,0,0.8)"}}>Starting <span style={{color:secondary}}>XV</span></div>
-            {(data.teamName||data.opponent||data.date)&&<div style={{fontSize:12,color:"#ccc",opacity:0.7,marginTop:3,letterSpacing:0.5}}>{data.teamName&&<span style={{fontWeight:600,opacity:1,color:"#fff"}}>{data.teamName}</span>}{data.opponent&&<span> vs {data.opponent}</span>}{data.date&&<span> · {data.date}</span>}</div>}
+            {clubName&&<div style={{fontSize:13,color:secondary,fontWeight:700,marginTop:3,letterSpacing:0.5}}>{clubName}</div>}
           </div>
-          {logo&&<img src={logo} style={{height:54,width:54,objectFit:"contain",filter:"drop-shadow(0 2px 12px rgba(0,0,0,0.8))"}}/>}
+          <div style={{textAlign:"right",display:"flex",flexDirection:"column",alignItems:"flex-end",gap:3}}>
+            {logo&&<img src={logo} style={{height:46,width:46,objectFit:"contain",filter:"drop-shadow(0 2px 12px rgba(0,0,0,0.8))",marginBottom:4}}/>}
+            {data.opponent&&<div style={{fontSize:13,color:"#fff",fontWeight:600}}>{data.isHome?"vs":"@ "}{data.opponent}</div>}
+            {data.date&&<div style={{fontSize:11,color:"#aaa",opacity:0.8}}>{data.date}</div>}
+          </div>
         </div>
         <div style={{display:"flex",flexDirection:"column",gap:3,flex:1}}>
           {starters.map((p,i)=><PlayerRow key={i} p={p} i={i}/>)}
@@ -737,10 +766,24 @@ function TemplatePicker({value,onChange,colors}){
 
 // ── MAIN APP ──────────────────────────────────────────────────────
 
+const COUNTRIES=[
+  {code:"",label:"No flag"},
+  {code:"🏴󠁧󠁢󠁥󠁮󠁧󠁿",label:"England"},{code:"🏴󠁧󠁢󠁳󠁣󠁴󠁿",label:"Scotland"},{code:"🏴󠁧󠁢󠁷󠁬󠁳󠁿",label:"Wales"},
+  {code:"🇮🇪",label:"Ireland"},{code:"🇫🇷",label:"France"},{code:"🇮🇹",label:"Italy"},
+  {code:"🇷🇴",label:"Romania"},{code:"🇬🇪",label:"Georgia"},{code:"🇵🇹",label:"Portugal"},
+  {code:"🇿🇦",label:"South Africa"},{code:"🇳🇿",label:"New Zealand"},{code:"🇦🇺",label:"Australia"},
+  {code:"🇦🇷",label:"Argentina"},{code:"🇯🇵",label:"Japan"},{code:"🇫🇯",label:"Fiji"},
+  {code:"🇸🇦",label:"Samoa"},{code:"🇹🇴",label:"Tonga"},{code:"🇺🇸",label:"USA"},
+  {code:"🇨🇦",label:"Canada"},{code:"🇺🇾",label:"Uruguay"},{code:"🇳🇦",label:"Namibia"},
+  {code:"🇿🇼",label:"Zimbabwe"},{code:"🇭🇰",label:"Hong Kong"},{code:"🇸🇬",label:"Singapore"},
+  {code:"🇷🇺",label:"Russia"},{code:"🇸🇵",label:"Spain"},{code:"🇧🇪",label:"Belgium"},
+  {code:"🇳🇱",label:"Netherlands"},{code:"🇩🇪",label:"Germany"},{code:"🇧🇷",label:"Brazil"},
+];
 const POSITIONS=["1 - Loosehead Prop","2 - Hooker","3 - Tighthead Prop","4 - Lock","5 - Lock","6 - Blindside Flanker","7 - Openside Flanker","8 - Number 8","9 - Scrum Half","10 - Fly Half","11 - Left Wing","12 - Inside Centre","13 - Outside Centre","14 - Right Wing","15 - Full Back","16 - Replacement","17 - Replacement","18 - Replacement","19 - Replacement","20 - Replacement","21 - Replacement","22 - Replacement","23 - Replacement"];
 
 function RugbySocialGenerator(){
   const [tab,setTab]=useState("fixture");
+  const [clubName,setClubName]=useState("");
   const [colors,setColors]=useState(DEFAULT_COLORS);
   const [logo,setLogo]=useState(null);
   const [autoColor,setAutoColor]=useState(false);
@@ -763,10 +806,10 @@ function RugbySocialGenerator(){
 
   const [fixture,setFixture]=useState({homeTeam:"",awayTeam:"",date:"",kickoff:"",venue:"",competition:""});
   const [result,setResult]=useState({ourTeam:"",opponent:"",homeScore:"",awayScore:"",isHome:true,date:"",competition:"",motm:"",tries:"",conversions:"",penalties:"",showDotd:false,dotd:""});
-  const [player,setPlayer]=useState({playerName:"",position:"",shirtNumber:"",caps:"",tries:"",age:"",hometown:"",quote:""});
-  const [announcement,setAnnouncement]=useState({teamName:"",opponent:"",date:"",players:Array(23).fill(null).map(()=>({name:"",captain:false,vice:false}))});
-  const [motm,setMotm]=useState({playerName:"",position:"",shirtNumber:"",caps:"",tries:"",age:"",hometown:"",reason:""});
-  const [dotd,setDotd]=useState({playerName:"",position:"",shirtNumber:"",caps:"",tries:"",age:"",hometown:"",reason:"",awardName:"Dick of the Day",swapColors:true});
+  const [player,setPlayer]=useState({playerName:"",position:"",flag:"",caps:"",tries:"",quote:""});
+  const [announcement,setAnnouncement]=useState({opponent:"",date:"",isHome:true,players:Array(23).fill(null).map(()=>({name:"",captain:false,vice:false}))});
+  const [motm,setMotm]=useState({playerName:"",position:"",flag:"",caps:"",tries:"",reason:""});
+  const [dotd,setDotd]=useState({playerName:"",position:"",flag:"",caps:"",tries:"",reason:"",awardName:"Dick of the Day",swapColors:true});
   const [sponsor,setSponsor]=useState({show:false,name:"",position:"bottom"});
 
   const activeFont=FONT_OPTIONS.find(f=>f.id===fontId)?.stack||FONT_OPTIONS[0].stack;
@@ -833,8 +876,23 @@ function RugbySocialGenerator(){
       const h2c=window.html2canvas;
       if(!h2c){alert("Capture library not loaded yet — please wait a moment and try again.");return;}
       const canvas=await h2c(node,{scale:2,useCORS:true,allowTaint:true,backgroundColor:null,logging:false});
-      const a=document.createElement("a");a.download=`${tab}-card.png`;a.href=canvas.toDataURL("image/png");a.click();
-    }catch(e){console.error(e);alert("Download failed — try right-clicking the preview and saving the image instead.");}
+      const filename=`${tab}-card.jpg`;
+      // On mobile try Web Share API — saves to Photos on iOS/Android
+      if(navigator.share && navigator.canShare){
+        canvas.toBlob(async(blob)=>{
+          const file=new File([blob],filename,{type:"image/jpeg"});
+          if(navigator.canShare({files:[file]})){
+            try{await navigator.share({files:[file],title:"Rugby Social Card"});return;}
+            catch(e){if(e.name==="AbortError")return;} // user cancelled
+          }
+          // Fallback if canShare returns false
+          const a=document.createElement("a");a.download=filename;a.href=URL.createObjectURL(blob);a.click();
+        },"image/jpeg",0.95);
+      } else {
+        // Desktop: direct download
+        const a=document.createElement("a");a.download=filename;a.href=canvas.toDataURL("image/jpeg",0.95);a.click();
+      }
+    }catch(e){console.error(e);alert("Download failed — long-press the preview image to save it.");}
   };
 
   const updateSquadPlayer=(i,field,val)=>{
@@ -884,18 +942,22 @@ function RugbySocialGenerator(){
     {tab==="player"&&tmpl===1&&<PlayerCard1 data={player} colors={colors} logo={logo} font={activeFont} photo={currentPhoto} bgOpacity={currentBg.opacity} bgBlur={currentBg.blur} dims={dims} sponsor={sponsor}/>}
     {tab==="player"&&tmpl===2&&<PlayerCard2 data={player} colors={colors} logo={logo} font={activeFont} photo={currentPhoto} bgOpacity={currentBg.opacity} bgBlur={currentBg.blur} dims={dims} sponsor={sponsor}/>}
     {tab==="player"&&tmpl===3&&<PlayerCard3 data={player} colors={colors} logo={logo} font={activeFont} photo={currentPhoto} bgOpacity={currentBg.opacity} bgBlur={currentBg.blur} dims={dims} sponsor={sponsor}/>}
-    {tab==="announcement"&&<TeamAnnouncementCard data={announcement} colors={colors} logo={logo} font={activeFont} variant={tmpl} photo={currentPhoto} bgOpacity={currentBg.opacity} bgBlur={currentBg.blur} dims={dims} sponsor={sponsor}/>}
-    {tab==="motm"&&tmpl===1&&<AwardCard1 data={motm} awardLabel="Man of the Match" colors={colors} logo={logo} font={activeFont} photo={currentPhoto} bgOpacity={currentBg.opacity} bgBlur={currentBg.blur} dims={dims} sponsor={sponsor}/>}
-    {tab==="motm"&&tmpl===2&&<AwardCard2 data={motm} awardLabel="Man of the Match" colors={colors} logo={logo} font={activeFont} photo={currentPhoto} bgOpacity={currentBg.opacity} bgBlur={currentBg.blur} dims={dims} sponsor={sponsor}/>}
-    {tab==="motm"&&tmpl===3&&<AwardCard3 data={motm} awardLabel="Man of the Match" colors={colors} logo={logo} font={activeFont} photo={currentPhoto} bgOpacity={currentBg.opacity} bgBlur={currentBg.blur} dims={dims} sponsor={sponsor}/>}
-    {tab==="dotd"&&tmpl===1&&<AwardCard1 data={dotd} awardLabel={dotd.awardName||"Dick of the Day"} colors={dotdColors} logo={logo} font={activeFont} photo={currentPhoto} bgOpacity={currentBg.opacity} bgBlur={currentBg.blur} dims={dims} sponsor={sponsor}/>}
-    {tab==="dotd"&&tmpl===2&&<AwardCard2 data={dotd} awardLabel={dotd.awardName||"Dick of the Day"} colors={dotdColors} logo={logo} font={activeFont} photo={currentPhoto} bgOpacity={currentBg.opacity} bgBlur={currentBg.blur} dims={dims} sponsor={sponsor}/>}
-    {tab==="dotd"&&tmpl===3&&<AwardCard3 data={dotd} awardLabel={dotd.awardName||"Dick of the Day"} colors={dotdColors} logo={logo} font={activeFont} photo={currentPhoto} bgOpacity={currentBg.opacity} bgBlur={currentBg.blur} dims={dims} sponsor={sponsor}/>}
+    {tab==="announcement"&&<TeamAnnouncementCard data={announcement} colors={colors} logo={logo} font={activeFont} variant={tmpl} photo={currentPhoto} bgOpacity={currentBg.opacity} bgBlur={currentBg.blur} dims={dims} sponsor={sponsor} clubName={clubName}/>}
+    {tab==="motm"&&tmpl===1&&<AwardCard1 data={motm} awardLabel="Man of the Match" colors={colors} logo={logo} font={activeFont} photo={currentPhoto} bgOpacity={currentBg.opacity} bgBlur={currentBg.blur} dims={dims} sponsor={sponsor} clubName={clubName}/>}
+    {tab==="motm"&&tmpl===2&&<AwardCard2 data={motm} awardLabel="Man of the Match" colors={colors} logo={logo} font={activeFont} photo={currentPhoto} bgOpacity={currentBg.opacity} bgBlur={currentBg.blur} dims={dims} sponsor={sponsor} clubName={clubName}/>}
+    {tab==="motm"&&tmpl===3&&<AwardCard3 data={motm} awardLabel="Man of the Match" colors={colors} logo={logo} font={activeFont} photo={currentPhoto} bgOpacity={currentBg.opacity} bgBlur={currentBg.blur} dims={dims} sponsor={sponsor} clubName={clubName}/>}
+    {tab==="dotd"&&tmpl===1&&<AwardCard1 data={dotd} awardLabel={dotd.awardName||"Dick of the Day"} colors={dotdColors} logo={logo} font={activeFont} photo={currentPhoto} bgOpacity={currentBg.opacity} bgBlur={currentBg.blur} dims={dims} sponsor={sponsor} clubName={clubName}/>}
+    {tab==="dotd"&&tmpl===2&&<AwardCard2 data={dotd} awardLabel={dotd.awardName||"Dick of the Day"} colors={dotdColors} logo={logo} font={activeFont} photo={currentPhoto} bgOpacity={currentBg.opacity} bgBlur={currentBg.blur} dims={dims} sponsor={sponsor} clubName={clubName}/>}
+    {tab==="dotd"&&tmpl===3&&<AwardCard3 data={dotd} awardLabel={dotd.awardName||"Dick of the Day"} colors={dotdColors} logo={logo} font={activeFont} photo={currentPhoto} bgOpacity={currentBg.opacity} bgBlur={currentBg.blur} dims={dims} sponsor={sponsor} clubName={clubName}/>}
   </>;
 
   const formContent = <>
     <div style={{marginBottom:20}}>
       <div style={{fontSize:10,letterSpacing:3,textTransform:"uppercase",color:"#555",marginBottom:10}}>Club Setup</div>
+      <div style={{marginBottom:12}}>
+        <label style={{display:"block",fontSize:10,letterSpacing:2,textTransform:"uppercase",color:"#777",marginBottom:4}}>Club Name</label>
+        <input value={clubName} onChange={e=>setClubName(e.target.value)} placeholder="Scarlets RFC" style={{width:"100%",background:"rgba(255,255,255,0.06)",border:"1px solid rgba(255,255,255,0.12)",borderRadius:8,padding:"10px 11px",color:"#f0f0f0",fontSize:14,fontFamily:"inherit",boxSizing:"border-box",outline:"none"}}/>
+      </div>
       <div style={{display:"flex",gap:10,marginBottom:10,alignItems:"center"}}>
         <button onClick={()=>logoInputRef.current?.click()} style={{flex:1,background:"rgba(255,255,255,0.05)",border:"1px dashed rgba(255,255,255,0.16)",borderRadius:8,padding:"12px 10px",color:"#aaa",cursor:"pointer",fontSize:13}}>
           {logo?"✅ Logo uploaded":"📁 Upload club logo"}
@@ -995,19 +1057,31 @@ function RugbySocialGenerator(){
     {tab==="player"&&<>
       <Field label="Player Name" value={player.playerName} onChange={v=>setPlayer(p=>({...p,playerName:v}))} placeholder="Sam Warburton"/>
       <Field label="Position" value={player.position} onChange={v=>setPlayer(p=>({...p,position:v}))} placeholder="Flanker"/>
-      <Field label="Shirt Number" value={player.shirtNumber} onChange={v=>setPlayer(p=>({...p,shirtNumber:v}))} placeholder="7"/>
+      <div style={{marginBottom:12}}>
+        <label style={{display:"block",fontSize:10,letterSpacing:2,textTransform:"uppercase",color:"#777",marginBottom:4}}>Country Flag (optional)</label>
+        <select value={player.flag} onChange={e=>setPlayer(p=>({...p,flag:e.target.value}))} style={{width:"100%",background:"rgba(255,255,255,0.06)",border:"1px solid rgba(255,255,255,0.12)",borderRadius:8,padding:"10px 11px",color:"#f0f0f0",fontSize:15,fontFamily:"inherit",outline:"none",cursor:"pointer"}}>
+          {COUNTRIES.map(c=><option key={c.code} value={c.code} style={{background:"#1a1a2e"}}>{c.code?`${c.code} ${c.label}`:c.label}</option>)}
+        </select>
+      </div>
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:9}}>
         <Field label="Club Caps" value={player.caps} onChange={v=>setPlayer(p=>({...p,caps:v}))} placeholder="142"/>
         <Field label="Tries" value={player.tries} onChange={v=>setPlayer(p=>({...p,tries:v}))} placeholder="34"/>
-        <Field label="Age" value={player.age} onChange={v=>setPlayer(p=>({...p,age:v}))} placeholder="27"/>
-        <Field label="Hometown" value={player.hometown} onChange={v=>setPlayer(p=>({...p,hometown:v}))} placeholder="Cardiff"/>
       </div>
       <Field label="Player Quote" value={player.quote} onChange={v=>setPlayer(p=>({...p,quote:v}))} placeholder="Every game is a chance to prove yourself." multiline/>
     </>}
     {tab==="announcement"&&<>
-      <Field label="Team Name" value={announcement.teamName} onChange={v=>setAnnouncement(a=>({...a,teamName:v}))} placeholder="Scarlets"/>
       <Field label="vs Opponent" value={announcement.opponent} onChange={v=>setAnnouncement(a=>({...a,opponent:v}))} placeholder="Ulster"/>
       <Field label="Date" value={announcement.date} onChange={v=>setAnnouncement(a=>({...a,date:v}))} placeholder="Sat 15 Mar"/>
+      <div style={{marginBottom:12}}>
+        <div style={{fontSize:10,letterSpacing:2,textTransform:"uppercase",color:"#777",marginBottom:6}}>Home or Away?</div>
+        <div style={{display:"flex",gap:6}}>
+          {[{v:true,l:"🏠 Home"},{v:false,l:"✈️ Away"}].map(({v,l})=>(
+            <button key={String(v)} onClick={()=>setAnnouncement(a=>({...a,isHome:v}))} style={{flex:1,padding:"10px",borderRadius:8,border:announcement.isHome===v?`1px solid ${colors.secondary}`:"1px solid rgba(255,255,255,0.09)",background:announcement.isHome===v?`${colors.secondary}22`:"rgba(255,255,255,0.04)",color:announcement.isHome===v?colors.secondary:"#777",cursor:"pointer",fontSize:13,fontWeight:announcement.isHome===v?700:400}}>
+              {l}
+            </button>
+          ))}
+        </div>
+      </div>
       <div style={{fontSize:10,letterSpacing:2,textTransform:"uppercase",color:"#555",margin:"12px 0 7px"}}>Starting XV</div>
       {POSITIONS.slice(0,15).map((pos,i)=>(
         <SquadPlayerField key={i} pos={pos} player={announcement.players[i]} onNameChange={v=>updateSquadPlayer(i,"name",v)} onCaptain={()=>updateSquadPlayer(i,"captain",!announcement.players[i].captain)} onVice={()=>updateSquadPlayer(i,"vice",!announcement.players[i].vice)} colors={colors}/>
@@ -1020,12 +1094,15 @@ function RugbySocialGenerator(){
     {tab==="motm"&&<>
       <Field label="Player Name" value={motm.playerName} onChange={v=>setMotm(m=>({...m,playerName:v}))} placeholder="Sam Warburton"/>
       <Field label="Position" value={motm.position} onChange={v=>setMotm(m=>({...m,position:v}))} placeholder="Flanker"/>
-      <Field label="Shirt Number" value={motm.shirtNumber} onChange={v=>setMotm(m=>({...m,shirtNumber:v}))} placeholder="7"/>
+      <div style={{marginBottom:12}}>
+        <label style={{display:"block",fontSize:10,letterSpacing:2,textTransform:"uppercase",color:"#777",marginBottom:4}}>Country Flag (optional)</label>
+        <select value={motm.flag} onChange={e=>setMotm(m=>({...m,flag:e.target.value}))} style={{width:"100%",background:"rgba(255,255,255,0.06)",border:"1px solid rgba(255,255,255,0.12)",borderRadius:8,padding:"10px 11px",color:"#f0f0f0",fontSize:15,fontFamily:"inherit",outline:"none",cursor:"pointer"}}>
+          {COUNTRIES.map(c=><option key={c.code} value={c.code} style={{background:"#1a1a2e"}}>{c.code?`${c.code} ${c.label}`:c.label}</option>)}
+        </select>
+      </div>
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:9}}>
         <Field label="Club Caps" value={motm.caps} onChange={v=>setMotm(m=>({...m,caps:v}))} placeholder="142"/>
         <Field label="Tries" value={motm.tries} onChange={v=>setMotm(m=>({...m,tries:v}))} placeholder="34"/>
-        <Field label="Age" value={motm.age} onChange={v=>setMotm(m=>({...m,age:v}))} placeholder="27"/>
-        <Field label="Hometown" value={motm.hometown} onChange={v=>setMotm(m=>({...m,hometown:v}))} placeholder="Cardiff"/>
       </div>
       <Field label="Reason for award" value={motm.reason} onChange={v=>setMotm(m=>({...m,reason:v}))} placeholder="Outstanding breakdown work and 2 tries…" multiline/>
     </>}
@@ -1037,12 +1114,15 @@ function RugbySocialGenerator(){
       </div>
       <Field label="Player Name" value={dotd.playerName} onChange={v=>setDotd(d=>({...d,playerName:v}))} placeholder="P. Harrison"/>
       <Field label="Position" value={dotd.position} onChange={v=>setDotd(d=>({...d,position:v}))} placeholder="Prop"/>
-      <Field label="Shirt Number" value={dotd.shirtNumber} onChange={v=>setDotd(d=>({...d,shirtNumber:v}))} placeholder="1"/>
+      <div style={{marginBottom:12}}>
+        <label style={{display:"block",fontSize:10,letterSpacing:2,textTransform:"uppercase",color:"#777",marginBottom:4}}>Country Flag (optional)</label>
+        <select value={dotd.flag} onChange={e=>setDotd(d=>({...d,flag:e.target.value}))} style={{width:"100%",background:"rgba(255,255,255,0.06)",border:"1px solid rgba(255,255,255,0.12)",borderRadius:8,padding:"10px 11px",color:"#f0f0f0",fontSize:15,fontFamily:"inherit",outline:"none",cursor:"pointer"}}>
+          {COUNTRIES.map(c=><option key={c.code} value={c.code} style={{background:"#1a1a2e"}}>{c.code?`${c.code} ${c.label}`:c.label}</option>)}
+        </select>
+      </div>
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:9}}>
         <Field label="Club Caps" value={dotd.caps} onChange={v=>setDotd(d=>({...d,caps:v}))} placeholder="12"/>
         <Field label="Tries" value={dotd.tries} onChange={v=>setDotd(d=>({...d,tries:v}))} placeholder="0"/>
-        <Field label="Age" value={dotd.age} onChange={v=>setDotd(d=>({...d,age:v}))} placeholder="34"/>
-        <Field label="Hometown" value={dotd.hometown} onChange={v=>setDotd(d=>({...d,hometown:v}))} placeholder="Swansea"/>
       </div>
       <Field label="Reason for award" value={dotd.reason} onChange={v=>setDotd(d=>({...d,reason:v}))} placeholder="Dropped the ball twice, missed a tackle, and somehow argued with the ref…" multiline/>
     </>}
