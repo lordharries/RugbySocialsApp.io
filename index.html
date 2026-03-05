@@ -261,33 +261,64 @@ function ResultCardBase({data,colors,logo,font,variant,photo,bgOpacity=1,bgBlur=
   const label=won?"Victory":drew?"Draw":"Defeat";
   const rc=won?"#4ade80":drew?secondary:"#f87171";
 
-  if(variant===2){return(
+  if(variant===2){
+  const scoreBlock2 = (
+    <>
+      <div style={{textAlign:"center",marginBottom:12}}>
+        <div style={{fontSize:72,fontWeight:900,color:"#fff",letterSpacing:-4,lineHeight:1,textShadow:"0 2px 20px rgba(0,0,0,0.8)"}}>{data.homeScore??"–"}<span style={{color:rc,margin:"0 4px"}}>:</span>{data.awayScore??"–"}</div>
+        <div style={{fontSize:14,color:"#ccc",marginTop:6,textShadow:"0 1px 6px rgba(0,0,0,0.8)"}}>{clubName||"Our Team"} <span style={{color:"#555"}}>vs</span> {data.opponent||"Opponent"}</div>
+      </div>
+      <div style={{display:"flex",flexDirection:"column",gap:5,marginBottom:8}}>
+        {data.motm&&<div style={{display:"flex",gap:8,fontSize:13}}><span style={{color:secondary,fontWeight:700,minWidth:130,letterSpacing:0.5}}>Man of the Match</span><span style={{color:"#fff"}}>{data.motm}</span></div>}
+        {data.tries&&<div style={{display:"flex",gap:8,fontSize:13}}><span style={{color:secondary,fontWeight:700,minWidth:130,letterSpacing:0.5}}>Try Scorers</span><span style={{color:"#fff"}}>{data.tries}</span></div>}
+        {data.conversions&&<div style={{display:"flex",gap:8,fontSize:13}}><span style={{color:secondary,fontWeight:700,minWidth:130,letterSpacing:0.5}}>Conversions</span><span style={{color:"#fff"}}>{data.conversions}</span></div>}
+        {data.penalties&&<div style={{display:"flex",gap:8,fontSize:13}}><span style={{color:secondary,fontWeight:700,minWidth:130,letterSpacing:0.5}}>Penalties</span><span style={{color:"#fff"}}>{data.penalties}</span></div>}
+      </div>
+      {data.showDotd&&data.dotd&&<div style={{background:"rgba(0,0,0,0.5)",borderRadius:8,padding:"8px 13px",border:`1px solid ${secondary}44`}}><span style={{fontSize:11,color:secondary,letterSpacing:2,textTransform:"uppercase"}}>{dotd?.awardName||"Dick of the Day"}: </span><span style={{color:"#fff",fontSize:13,fontWeight:600}}>{data.dotd}</span></div>}
+    </>
+  );
+  return(
     <div style={{width:dims.w,height:dims.h,background:primary,position:"relative",fontFamily:font,overflow:"hidden",borderRadius:12}}>
       <BgPhoto photo={photo} primary={primary} opacity={bgOpacity} blur={bgBlur}/>
       <SponsorBar sponsor={sponsor} colors={colors}/>
       {!photo&&<div style={{position:"absolute",inset:0,background:`linear-gradient(180deg, ${primary} 0%, #0d0d0d 60%)`,zIndex:0}}/>}
       <div style={{position:"absolute",top:0,left:0,right:0,height:5,background:rc,zIndex:3}}/>
       <div style={{padding:"28px 32px",paddingTop:`calc(28px + ${sponsorPad(sponsor).top}px)`,paddingBottom:`calc(28px + ${sponsorPad(sponsor).bottom}px)`,display:"flex",flexDirection:"column",height:"100%",boxSizing:"border-box",position:"relative",zIndex:3}}>
-        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
           {logo&&<img src={logo} style={{height:50,width:50,objectFit:"contain",filter:"drop-shadow(0 2px 12px rgba(0,0,0,0.7))"}}/>}
           <div style={{background:rc,color:"#000",padding:"5px 18px",borderRadius:4,fontSize:13,fontWeight:800,letterSpacing:3,textTransform:"uppercase"}}>{label}</div>
         </div>
-        <div style={{textAlign:"center",marginBottom:20}}>
-          <div style={{fontSize:72,fontWeight:900,color:"#fff",letterSpacing:-4,lineHeight:1,textShadow:"0 2px 20px rgba(0,0,0,0.8)"}}>{data.homeScore??"–"}<span style={{color:rc,margin:"0 4px"}}>:</span>{data.awayScore??"–"}</div>
-          <div style={{fontSize:14,color:"#ccc",marginTop:6,textShadow:"0 1px 6px rgba(0,0,0,0.8)"}}>{clubName||data.ourTeam||"Our Team"} <span style={{color:"#555"}}>vs</span> {data.opponent||"Opponent"}</div>
-        </div>
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,flex:1}}>
-          {data.motm&&<StatBlock label="Man of the Match" value={data.motm} colors={colors}/>}
-          {data.tries&&<StatBlock label="Try Scorers 🏉" value={data.tries} colors={colors}/>}
-          {data.conversions&&<StatBlock label="Conversions" value={data.conversions} colors={colors}/>}
-          {data.penalties&&<StatBlock label="Penalties" value={data.penalties} colors={colors}/>}
-        </div>
-        {data.showDotd&&data.dotd&&<div style={{marginTop:10,background:"rgba(0,0,0,0.5)",borderRadius:8,padding:"9px 13px",border:`1px solid ${secondary}44`}}><span style={{fontSize:11,color:secondary,letterSpacing:2,textTransform:"uppercase"}}>🐥 Dick of the Day: </span><span style={{color:"#fff",fontSize:13,fontWeight:600}}>{data.dotd}</span></div>}
+        {data.scorePosition==="top" ? scoreBlock2 : <div style={{flex:1}}/>}
+        {data.scorePosition==="bottom" && <div style={{marginTop:"auto"}}>{scoreBlock2}</div>}
       </div>
     </div>
   );}
 
-  if(variant===3){return(
+  if(variant===3){
+  const scoreBlock3 = (
+    <>
+      <div style={{display:"flex",alignItems:"center",gap:16,marginBottom:10}}>
+        <div style={{flex:1}}><div style={{fontSize:11,color:secondary,letterSpacing:2,textTransform:"uppercase",marginBottom:2}}>{clubName||"Our Team"}</div></div>
+        <div style={{textAlign:"center"}}>
+          <div style={{fontSize:56,fontWeight:900,color:"#fff",letterSpacing:-2,lineHeight:1,textShadow:"0 2px 16px rgba(0,0,0,0.8)"}}>{data.homeScore??"–"}–{data.awayScore??"–"}</div>
+          <div style={{display:"inline-block",background:rc,color:"#000",padding:"2px 12px",borderRadius:20,fontSize:11,fontWeight:700,marginTop:4}}>{label}</div>
+        </div>
+        <div style={{flex:1,textAlign:"right"}}><div style={{fontSize:11,color:secondary,letterSpacing:2,textTransform:"uppercase",marginBottom:2}}>{data.opponent||"Opponent"}</div></div>
+      </div>
+      <div style={{borderTop:`1px solid ${secondary}33`,borderBottom:`1px solid ${secondary}33`,padding:"8px 0",marginBottom:10,display:"flex",gap:20}}>
+        {data.competition&&<span style={{color:secondary,fontSize:12}}>{data.competition}</span>}
+        {data.date&&<span style={{color:"#ccc",fontSize:12,opacity:0.7}}>{data.date}</span>}
+      </div>
+      <div style={{display:"flex",flexDirection:"column",gap:5,marginBottom:8}}>
+        {data.motm&&<div style={{display:"flex",gap:8,fontSize:13}}><span style={{color:secondary,fontWeight:700,minWidth:130,letterSpacing:0.5}}>Man of the Match</span><span style={{color:"#fff"}}>{data.motm}</span></div>}
+        {data.tries&&<div style={{display:"flex",gap:8,fontSize:13}}><span style={{color:secondary,fontWeight:700,minWidth:130,letterSpacing:0.5}}>Try Scorers</span><span style={{color:"#fff"}}>{data.tries}</span></div>}
+        {data.conversions&&<div style={{display:"flex",gap:8,fontSize:13}}><span style={{color:secondary,fontWeight:700,minWidth:130,letterSpacing:0.5}}>Conversions</span><span style={{color:"#fff"}}>{data.conversions}</span></div>}
+        {data.penalties&&<div style={{display:"flex",gap:8,fontSize:13}}><span style={{color:secondary,fontWeight:700,minWidth:130,letterSpacing:0.5}}>Penalties</span><span style={{color:"#fff"}}>{data.penalties}</span></div>}
+      </div>
+      {data.showDotd&&data.dotd&&<div style={{background:"rgba(0,0,0,0.5)",borderRadius:8,padding:"8px 13px",border:`1px solid ${secondary}44`}}><span style={{fontSize:11,color:secondary,letterSpacing:2,textTransform:"uppercase"}}>{dotd?.awardName||"Dick of the Day"}: </span><span style={{color:"#fff",fontSize:13,fontWeight:600}}>{data.dotd}</span></div>}
+    </>
+  );
+  return(
     <div style={{width:dims.w,height:dims.h,background:primary,position:"relative",fontFamily:font,overflow:"hidden",borderRadius:12}}>
       <BgPhoto photo={photo} primary={primary} opacity={bgOpacity} blur={bgBlur}/>
       <SponsorBar sponsor={sponsor} colors={colors}/>
@@ -296,34 +327,37 @@ function ResultCardBase({data,colors,logo,font,variant,photo,bgOpacity=1,bgBlur=
       </>}
       <div style={{position:"absolute",left:0,top:0,bottom:0,width:5,background:secondary,zIndex:3}}/>
       <div style={{padding:"28px 32px",paddingTop:`calc(28px + ${sponsorPad(sponsor).top}px)`,paddingBottom:`calc(28px + ${sponsorPad(sponsor).bottom}px)`,display:"flex",flexDirection:"column",height:"100%",boxSizing:"border-box",position:"relative",zIndex:3}}>
-        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:16}}>
+        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:12}}>
           <div style={{fontSize:10,letterSpacing:4,color:secondary,textTransform:"uppercase"}}>Match Result</div>
           {logo&&<img src={logo} style={{height:46,width:46,objectFit:"contain",filter:"drop-shadow(0 2px 12px rgba(0,0,0,0.7))"}}/>}
         </div>
-        <div style={{display:"flex",alignItems:"center",gap:16,marginBottom:16}}>
-          <div style={{flex:1}}><div style={{fontSize:11,color:secondary,letterSpacing:2,textTransform:"uppercase",marginBottom:2}}>{clubName||data.ourTeam||"Our Team"}</div></div>
-          <div style={{textAlign:"center"}}>
-            <div style={{fontSize:56,fontWeight:900,color:"#fff",letterSpacing:-2,lineHeight:1,textShadow:"0 2px 16px rgba(0,0,0,0.8)"}}>{data.homeScore??"–"}–{data.awayScore??"–"}</div>
-            <div style={{display:"inline-block",background:rc,color:"#000",padding:"2px 12px",borderRadius:20,fontSize:11,fontWeight:700,marginTop:4}}>{label}</div>
-          </div>
-          <div style={{flex:1,textAlign:"right"}}><div style={{fontSize:11,color:secondary,letterSpacing:2,textTransform:"uppercase",marginBottom:2}}>{data.opponent||"Opponent"}</div></div>
-        </div>
-        <div style={{borderTop:`1px solid ${secondary}33`,borderBottom:`1px solid ${secondary}33`,padding:"10px 0",marginBottom:12,display:"flex",gap:20}}>
-          {data.competition&&<span style={{color:secondary,fontSize:12}}>{data.competition}</span>}
-          {data.date&&<span style={{color:"#ccc",fontSize:12,opacity:0.7}}>{data.date}</span>}
-        </div>
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,flex:1}}>
-          {data.motm&&<StatBlock label="Man of the Match" value={data.motm} colors={colors}/>}
-          {data.tries&&<StatBlock label="Try Scorers 🏉" value={data.tries} colors={colors}/>}
-          {data.conversions&&<StatBlock label="Conversions" value={data.conversions} colors={colors}/>}
-          {data.penalties&&<StatBlock label="Penalties" value={data.penalties} colors={colors}/>}
-        </div>
-        {data.showDotd&&data.dotd&&<div style={{marginTop:10,background:"rgba(0,0,0,0.5)",borderRadius:8,padding:"9px 13px",border:`1px solid ${secondary}44`}}><span style={{fontSize:11,color:secondary,letterSpacing:2,textTransform:"uppercase"}}>🐥 Dick of the Day: </span><span style={{color:"#fff",fontSize:13,fontWeight:600}}>{data.dotd}</span></div>}
+        {data.scorePosition==="top" ? scoreBlock3 : <div style={{flex:1}}/>}
+        {data.scorePosition==="bottom" && <div style={{marginTop:"auto"}}>{scoreBlock3}</div>}
       </div>
     </div>
   );}
 
   // variant 1
+  const scoreBlock = (
+    <>
+      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:10}}>
+        <div style={{flex:1}}><div style={{fontSize:11,color:secondary,letterSpacing:2,textTransform:"uppercase",marginBottom:3}}>{data.isHome?"Home":"Away"}</div><div style={{fontSize:20,fontWeight:700,color:"#fff",textShadow:"0 1px 8px rgba(0,0,0,0.8)"}}>{clubName||"Our Team"}</div></div>
+        <div style={{fontSize:50,fontWeight:900,color:"#fff",letterSpacing:-2,padding:"0 16px",textShadow:"0 2px 16px rgba(0,0,0,0.8)"}}>{data.homeScore??"–"}–{data.awayScore??"–"}</div>
+        <div style={{flex:1,textAlign:"right"}}><div style={{fontSize:11,color:secondary,letterSpacing:2,textTransform:"uppercase",marginBottom:3}}>{data.isHome?"Away":"Home"}</div><div style={{fontSize:20,fontWeight:700,color:"#fff",textShadow:"0 1px 8px rgba(0,0,0,0.8)"}}>{data.opponent||"Opponent"}</div></div>
+      </div>
+      <div style={{borderTop:`1px solid ${secondary}44`,borderBottom:`1px solid ${secondary}44`,padding:"8px 0",marginBottom:10,display:"flex",gap:20,flexWrap:"wrap"}}>
+        {data.competition&&<span style={{color:secondary,fontSize:12}}>{data.competition}</span>}
+        {data.date&&<span style={{color:"#ccc",fontSize:12,opacity:0.7}}>{data.date}</span>}
+      </div>
+      <div style={{display:"flex",flexDirection:"column",gap:5,marginBottom:8}}>
+        {data.motm&&<div style={{display:"flex",gap:8,fontSize:13}}><span style={{color:secondary,fontWeight:700,minWidth:130,letterSpacing:0.5}}>Man of the Match</span><span style={{color:"#fff"}}>{data.motm}</span></div>}
+        {data.tries&&<div style={{display:"flex",gap:8,fontSize:13}}><span style={{color:secondary,fontWeight:700,minWidth:130,letterSpacing:0.5}}>Try Scorers</span><span style={{color:"#fff"}}>{data.tries}</span></div>}
+        {data.conversions&&<div style={{display:"flex",gap:8,fontSize:13}}><span style={{color:secondary,fontWeight:700,minWidth:130,letterSpacing:0.5}}>Conversions</span><span style={{color:"#fff"}}>{data.conversions}</span></div>}
+        {data.penalties&&<div style={{display:"flex",gap:8,fontSize:13}}><span style={{color:secondary,fontWeight:700,minWidth:130,letterSpacing:0.5}}>Penalties</span><span style={{color:"#fff"}}>{data.penalties}</span></div>}
+      </div>
+      {data.showDotd&&data.dotd&&<div style={{background:"rgba(0,0,0,0.5)",borderRadius:8,padding:"8px 13px",border:`1px solid ${secondary}44`}}><span style={{fontSize:11,color:secondary,letterSpacing:2,textTransform:"uppercase"}}>{dotd?.awardName||"Dick of the Day"}: </span><span style={{color:"#fff",fontSize:13,fontWeight:600}}>{data.dotd}</span></div>}
+    </>
+  );
   return(
     <div style={{width:dims.w,height:dims.h,background:primary,position:"relative",fontFamily:font,overflow:"hidden",borderRadius:12}}>
       <BgPhoto photo={photo} primary={primary} opacity={bgOpacity} blur={bgBlur}/>
@@ -331,26 +365,12 @@ function ResultCardBase({data,colors,logo,font,variant,photo,bgOpacity=1,bgBlur=
       {!photo&&<div style={{position:"absolute",inset:0,background:`linear-gradient(135deg, ${secondary}22 0%, transparent 50%)`,zIndex:0}}/>}
       <div style={{position:"absolute",top:0,left:0,right:0,height:6,background:secondary,zIndex:3}}/>
       <div style={{padding:"28px 36px",paddingTop:`calc(28px + ${sponsorPad(sponsor).top}px)`,paddingBottom:`calc(28px + ${sponsorPad(sponsor).bottom}px)`,display:"flex",flexDirection:"column",height:"100%",boxSizing:"border-box",position:"relative",zIndex:3}}>
-        <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:18}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:14}}>
           {logo&&<img src={logo} style={{height:52,width:52,objectFit:"contain",filter:"drop-shadow(0 2px 12px rgba(0,0,0,0.7))"}}/>}
           <div style={{background:rc,color:"#000",padding:"4px 16px",borderRadius:20,fontSize:12,fontWeight:700,letterSpacing:2,textTransform:"uppercase"}}>{label}</div>
         </div>
-        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:18}}>
-          <div style={{flex:1}}><div style={{fontSize:11,color:secondary,letterSpacing:2,textTransform:"uppercase",marginBottom:3}}>{data.isHome?"Home":"Away"}</div><div style={{fontSize:20,fontWeight:700,color:"#fff",textShadow:"0 1px 8px rgba(0,0,0,0.8)"}}>{clubName||data.ourTeam||"Our Team"}</div></div>
-          <div style={{fontSize:50,fontWeight:900,color:"#fff",letterSpacing:-2,padding:"0 16px",textShadow:"0 2px 16px rgba(0,0,0,0.8)"}}>{data.homeScore??"–"}–{data.awayScore??"–"}</div>
-          <div style={{flex:1,textAlign:"right"}}><div style={{fontSize:11,color:secondary,letterSpacing:2,textTransform:"uppercase",marginBottom:3}}>{data.isHome?"Away":"Home"}</div><div style={{fontSize:20,fontWeight:700,color:"#fff",textShadow:"0 1px 8px rgba(0,0,0,0.8)"}}>{data.opponent||"Opponent"}</div></div>
-        </div>
-        <div style={{borderTop:`1px solid ${secondary}44`,borderBottom:`1px solid ${secondary}44`,padding:"11px 0",marginBottom:12,display:"flex",gap:20,flexWrap:"wrap"}}>
-          {data.competition&&<span style={{color:secondary,fontSize:12}}>{data.competition}</span>}
-          {data.date&&<span style={{color:"#ccc",fontSize:12,opacity:0.7}}>{data.date}</span>}
-        </div>
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:11,flex:1}}>
-          {data.motm&&<StatBlock label="Man of the Match" value={data.motm} colors={colors}/>}
-          {data.tries&&<StatBlock label="Try Scorers 🏉" value={data.tries} colors={colors}/>}
-          {data.conversions&&<StatBlock label="Conversions" value={data.conversions} colors={colors}/>}
-          {data.penalties&&<StatBlock label="Penalties" value={data.penalties} colors={colors}/>}
-        </div>
-        {data.showDotd&&data.dotd&&<div style={{marginTop:10,background:"rgba(0,0,0,0.5)",borderRadius:8,padding:"9px 13px",border:`1px solid ${secondary}44`}}><span style={{fontSize:11,color:secondary,letterSpacing:2,textTransform:"uppercase"}}>🐥 Dick of the Day: </span><span style={{color:"#fff",fontSize:13,fontWeight:600}}>{data.dotd}</span></div>}
+        {data.scorePosition==="top" ? scoreBlock : <div style={{flex:1}}/>}
+        {data.scorePosition==="bottom" && <div style={{marginTop:"auto"}}>{scoreBlock}</div>}
       </div>
     </div>
   );
@@ -806,26 +826,27 @@ function RugbySocialGenerator(){
   const [autoColor,setAutoColor]=useState(false);
   const [fontId,setFontId]=useState("cinzel");
   const [format,setFormat]=useState("portrait");
-  const [templates,setTemplates]=useState({fixture:1,result:1,player:1,announcement:1,motm:1,dotd:1});
+  const [templates,setTemplates]=useState({fixture:1,result:1,player:1,announcement:1,motm:1,potm:1,dotd:1});
   // Per-tab background photos
-  const [photos,setPhotos]=useState({fixture:null,result:null,player:null,announcement:null,motm:null,dotd:null});
+  const [photos,setPhotos]=useState({fixture:null,result:null,player:null,announcement:null,motm:null,potm:null,dotd:null});
   const [palette,setPalette]=useState([]);
   const [paletteOffset,setPaletteOffset]=useState(0);
   const [bgSettings,setBgSettings]=useState({
     fixture:{opacity:1,blur:0}, result:{opacity:1,blur:0},
     player:{opacity:1,blur:0}, announcement:{opacity:1,blur:0},
-    motm:{opacity:1,blur:0}, dotd:{opacity:1,blur:0}
+    motm:{opacity:1,blur:0}, potm:{opacity:1,blur:0}, dotd:{opacity:1,blur:0}
   });
 
   const logoInputRef=useRef();
-  const photoRefs={fixture:useRef(),result:useRef(),player:useRef(),announcement:useRef(),motm:useRef(),dotd:useRef()};
+  const photoRefs={fixture:useRef(),result:useRef(),player:useRef(),announcement:useRef(),motm:useRef(),potm:useRef(),dotd:useRef()};
   const cardRef=useRef();
 
   const [fixture,setFixture]=useState({opponent:"",isHome:true,date:"",kickoff:"",venue:"",competition:""});
-  const [result,setResult]=useState({opponent:"",homeScore:"",awayScore:"",isHome:true,date:"",competition:"",motm:"",tries:"",conversions:"",penalties:"",showDotd:false,dotd:""});
+  const [result,setResult]=useState({opponent:"",homeScore:"",awayScore:"",isHome:true,scorePosition:"top",date:"",competition:"",motm:"",tries:"",conversions:"",penalties:"",showDotd:false,dotd:""});
   const [player,setPlayer]=useState({playerName:"",position:"",flag:"",caps:"",tries:"",quote:""});
   const [announcement,setAnnouncement]=useState({opponent:"",date:"",isHome:true,players:Array(23).fill(null).map(()=>({name:"",flag:"",captain:false,vice:false}))});
   const [motm,setMotm]=useState({playerName:"",position:"",flag:"",caps:"",tries:"",reason:""});
+  const [potm,setPotm]=useState({playerName:"",position:"",flag:"",caps:"",tries:"",reason:""});
   const [dotd,setDotd]=useState({playerName:"",position:"",flag:"",caps:"",tries:"",reason:"",awardName:"Dick of the Day",swapColors:true});
   const [sponsor,setSponsor]=useState({show:false,name:"",position:"bottom"});
 
@@ -930,7 +951,8 @@ function RugbySocialGenerator(){
     {id:"player",label:"👤 Player"},
     {id:"announcement",label:"📋 Team Sheet"},
     {id:"motm",label:"⭐ Man of Match"},
-    {id:"dotd",label:"🐥 "+( dotd.awardName||"Dick of Day")},
+    {id:"potm",label:"🏆 Player of Month"},
+    {id:"dotd",label:""🏆 "+( dotd.awardName||"Dick of Day")},
   ];
 
   // DOTD optionally swaps primary ↔ secondary
@@ -963,6 +985,9 @@ function RugbySocialGenerator(){
     {tab==="motm"&&tmpl===1&&<AwardCard1 data={motm} awardLabel="Man of the Match" colors={colors} logo={logo} font={activeFont} photo={currentPhoto} bgOpacity={currentBg.opacity} bgBlur={currentBg.blur} dims={dims} sponsor={sponsor} clubName={clubName}/>}
     {tab==="motm"&&tmpl===2&&<AwardCard2 data={motm} awardLabel="Man of the Match" colors={colors} logo={logo} font={activeFont} photo={currentPhoto} bgOpacity={currentBg.opacity} bgBlur={currentBg.blur} dims={dims} sponsor={sponsor} clubName={clubName}/>}
     {tab==="motm"&&tmpl===3&&<AwardCard3 data={motm} awardLabel="Man of the Match" colors={colors} logo={logo} font={activeFont} photo={currentPhoto} bgOpacity={currentBg.opacity} bgBlur={currentBg.blur} dims={dims} sponsor={sponsor} clubName={clubName}/>}
+    {tab==="potm"&&tmpl===1&&<AwardCard1 data={potm} awardLabel="Player of the Month" colors={colors} logo={logo} font={activeFont} photo={currentPhoto} bgOpacity={currentBg.opacity} bgBlur={currentBg.blur} dims={dims} sponsor={sponsor} clubName={clubName}/>}
+    {tab==="potm"&&tmpl===2&&<AwardCard2 data={potm} awardLabel="Player of the Month" colors={colors} logo={logo} font={activeFont} photo={currentPhoto} bgOpacity={currentBg.opacity} bgBlur={currentBg.blur} dims={dims} sponsor={sponsor} clubName={clubName}/>}
+    {tab==="potm"&&tmpl===3&&<AwardCard3 data={potm} awardLabel="Player of the Month" colors={colors} logo={logo} font={activeFont} photo={currentPhoto} bgOpacity={currentBg.opacity} bgBlur={currentBg.blur} dims={dims} sponsor={sponsor} clubName={clubName}/>}
     {tab==="dotd"&&tmpl===1&&<AwardCard1 data={dotd} awardLabel={dotd.awardName||"Dick of the Day"} colors={dotdColors} logo={logo} font={activeFont} photo={currentPhoto} bgOpacity={currentBg.opacity} bgBlur={currentBg.blur} dims={dims} sponsor={sponsor} clubName={clubName}/>}
     {tab==="dotd"&&tmpl===2&&<AwardCard2 data={dotd} awardLabel={dotd.awardName||"Dick of the Day"} colors={dotdColors} logo={logo} font={activeFont} photo={currentPhoto} bgOpacity={currentBg.opacity} bgBlur={currentBg.blur} dims={dims} sponsor={sponsor} clubName={clubName}/>}
     {tab==="dotd"&&tmpl===3&&<AwardCard3 data={dotd} awardLabel={dotd.awardName||"Dick of the Day"} colors={dotdColors} logo={logo} font={activeFont} photo={currentPhoto} bgOpacity={currentBg.opacity} bgBlur={currentBg.blur} dims={dims} sponsor={sponsor} clubName={clubName}/>}
@@ -1073,14 +1098,24 @@ function RugbySocialGenerator(){
         <Field label="Our Score" value={result.homeScore} onChange={v=>setResult(r=>({...r,homeScore:v}))} placeholder="32"/>
         <Field label="Their Score" value={result.awayScore} onChange={v=>setResult(r=>({...r,awayScore:v}))} placeholder="17"/>
       </div>
+      <div style={{marginBottom:12}}>
+        <div style={{fontSize:10,letterSpacing:2,textTransform:"uppercase",color:"#777",marginBottom:6}}>Score Position</div>
+        <div style={{display:"flex",gap:6}}>
+          {[{v:"top",l:"⬆️ Top"},{v:"bottom",l:"⬇️ Bottom"}].map(({v,l})=>(
+            <button key={v} onClick={()=>setResult(r=>({...r,scorePosition:v}))} style={{flex:1,padding:"10px",borderRadius:8,border:(result.scorePosition||"top")===v?`1px solid ${colors.secondary}`:"1px solid rgba(255,255,255,0.09)",background:(result.scorePosition||"top")===v?`${colors.secondary}22`:"rgba(255,255,255,0.04)",color:(result.scorePosition||"top")===v?colors.secondary:"#777",cursor:"pointer",fontSize:13,fontWeight:(result.scorePosition||"top")===v?700:400}}>
+              {l}
+            </button>
+          ))}
+        </div>
+      </div>
       <Field label="Date" value={result.date} onChange={v=>setResult(r=>({...r,date:v}))} placeholder="Sat 8 Mar 2025"/>
       <Field label="Competition" value={result.competition} onChange={v=>setResult(r=>({...r,competition:v}))} placeholder="URC"/>
       <Field label="Man of the Match" value={result.motm} onChange={v=>setResult(r=>({...r,motm:v}))} placeholder="J. Thompson"/>
       <Field label="Try Scorers" value={result.tries} onChange={v=>setResult(r=>({...r,tries:v}))} placeholder="Smith (2), Jones, Brown" multiline/>
       <Field label="Conversions" value={result.conversions} onChange={v=>setResult(r=>({...r,conversions:v}))} placeholder="Williams (4/5)"/>
       <Field label="Penalties" value={result.penalties} onChange={v=>setResult(r=>({...r,penalties:v}))} placeholder="Williams (2)"/>
-      <Toggle label="Show Dick of the Day 🐥" checked={result.showDotd} onChange={v=>setResult(r=>({...r,showDotd:v}))}/>
-      {result.showDotd&&<Field label="Dick of the Day 🐥" value={result.dotd} onChange={v=>setResult(r=>({...r,dotd:v}))} placeholder="P. Harrison"/>}
+      <Toggle label="Show Dick of the Day" checked={result.showDotd} onChange={v=>setResult(r=>({...r,showDotd:v}))}/>
+      {result.showDotd&&<Field label="Dick of the Day" value={result.dotd} onChange={v=>setResult(r=>({...r,dotd:v}))} placeholder="P. Harrison"/>}
     </>}
     {tab==="player"&&<>
       <Field label="Player Name" value={player.playerName} onChange={v=>setPlayer(p=>({...p,playerName:v}))} placeholder="Sam Warburton"/>
@@ -1133,6 +1168,21 @@ function RugbySocialGenerator(){
         <Field label="Tries" value={motm.tries} onChange={v=>setMotm(m=>({...m,tries:v}))} placeholder="34"/>
       </div>
       <Field label="Reason for award" value={motm.reason} onChange={v=>setMotm(m=>({...m,reason:v}))} placeholder="Outstanding breakdown work and 2 tries…" multiline/>
+    </>}
+    {tab==="potm"&&<>
+      <Field label="Player Name" value={potm.playerName} onChange={v=>setPotm(m=>({...m,playerName:v}))} placeholder="Sam Warburton"/>
+      <Field label="Position" value={potm.position} onChange={v=>setPotm(m=>({...m,position:v}))} placeholder="Flanker"/>
+      <div style={{marginBottom:12}}>
+        <label style={{display:"block",fontSize:10,letterSpacing:2,textTransform:"uppercase",color:"#777",marginBottom:4}}>Country Flag (optional)</label>
+        <select value={potm.flag} onChange={e=>setPotm(m=>({...m,flag:e.target.value}))} style={{width:"100%",background:"rgba(255,255,255,0.06)",border:"1px solid rgba(255,255,255,0.12)",borderRadius:8,padding:"10px 11px",color:"#f0f0f0",fontSize:15,fontFamily:"inherit",outline:"none",cursor:"pointer"}}>
+          {COUNTRIES.map(c=><option key={c.code} value={c.code} style={{background:"#1a1a2e"}}>{c.code?`${c.code} ${c.label}`:c.label}</option>)}
+        </select>
+      </div>
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:9}}>
+        <Field label="Club Caps" value={potm.caps} onChange={v=>setPotm(m=>({...m,caps:v}))} placeholder="142"/>
+        <Field label="Tries" value={potm.tries} onChange={v=>setPotm(m=>({...m,tries:v}))} placeholder="34"/>
+      </div>
+      <Field label="Reason for award" value={potm.reason} onChange={v=>setPotm(m=>({...m,reason:v}))} placeholder="Consistently outstanding performances throughout the month…" multiline/>
     </>}
     {tab==="dotd"&&<>
       <div style={{marginBottom:12,padding:"11px 14px",background:"rgba(248,113,113,0.07)",border:"1px solid rgba(248,113,113,0.2)",borderRadius:10}}>
