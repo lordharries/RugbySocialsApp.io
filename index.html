@@ -4,12 +4,9 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Rugby Social Generator 🏉</title>
-  <!-- React -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js" crossorigin="anonymous"></script>
-  <!-- Babel (JSX transpilation in-browser) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js" crossorigin="anonymous"></script>
-  <!-- html2canvas for card download -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" crossorigin="anonymous"></script>
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -127,13 +124,36 @@ function StatBlock({label,value,colors}){
   </div>;
 }
 
-// ── FIXTURE CARDS ────────────────────────────────────────────────
+function SponsorBar({sponsor, colors}) {
+  if (!sponsor?.show || !sponsor?.name) return null;
+  const isTop = sponsor.position === "top";
+  return (
+    <div style={{
+      position:"absolute",
+      top: isTop ? 0 : "auto",
+      bottom: isTop ? "auto" : 0,
+      left: 0, right: 0,
+      zIndex: 5,
+      background: "rgba(0,0,0,0.55)",
+      backdropFilter: "blur(6px)",
+      borderTop: isTop ? "none" : `2px solid ${colors.secondary}`,
+      borderBottom: isTop ? `2px solid ${colors.secondary}` : "none",
+      padding: "7px 16px",
+      textAlign: "center",
+      pointerEvents: "none",
+    }}>
+      <span style={{fontSize:11,color:"rgba(255,255,255,0.75)",letterSpacing:1}}>Proudly sponsored by </span>
+      <span style={{fontSize:11,color:colors.secondary,fontWeight:700,letterSpacing:1}}>{sponsor.name}</span>
+    </div>
+  );
+}
 
-function FixtureCard1({data,colors,logo,font,photo,bgOpacity=1,bgBlur=0,dims}){
+function FixtureCard1({data,colors,logo,font,photo,bgOpacity=1,bgBlur=0,dims,sponsor}){
   const {primary,secondary}=colors; const txt=ctxt(primary);
   return(
     <div style={{width:dims.w,height:dims.h,background:primary,position:"relative",fontFamily:font,overflow:"hidden",borderRadius:12}}>
       <BgPhoto photo={photo} primary={primary} opacity={bgOpacity} blur={bgBlur}/>
+      <SponsorBar sponsor={sponsor} colors={colors}/>
       {!photo&&<div style={{position:"absolute",inset:0,background:`radial-gradient(circle at 80% 20%, ${secondary}33 0%, transparent 60%)`,zIndex:0}}/>}
       <div style={{position:"absolute",top:0,left:0,right:0,height:6,background:secondary,zIndex:3}}/>
       <div style={{padding:"32px 40px",display:"flex",flexDirection:"column",height:"100%",boxSizing:"border-box",position:"relative",zIndex:3}}>
@@ -153,11 +173,12 @@ function FixtureCard1({data,colors,logo,font,photo,bgOpacity=1,bgBlur=0,dims}){
   );
 }
 
-function FixtureCard2({data,colors,logo,font,photo,bgOpacity=1,bgBlur=0,dims}){
+function FixtureCard2({data,colors,logo,font,photo,bgOpacity=1,bgBlur=0,dims,sponsor}){
   const {primary,secondary}=colors; const txtS=ctxt(secondary);
   return(
     <div style={{width:dims.w,height:dims.h,background:primary,position:"relative",fontFamily:font,overflow:"hidden",borderRadius:12}}>
       <BgPhoto photo={photo} primary={primary} opacity={bgOpacity} blur={bgBlur}/>
+      <SponsorBar sponsor={sponsor} colors={colors}/>
       {!photo&&<>
         <div style={{position:"absolute",top:0,left:0,bottom:0,width:"50%",background:primary,zIndex:0}}/>
         <div style={{position:"absolute",top:0,right:0,bottom:0,width:"50%",background:"#111",zIndex:0}}/>
@@ -187,11 +208,12 @@ function FixtureCard2({data,colors,logo,font,photo,bgOpacity=1,bgBlur=0,dims}){
   );
 }
 
-function FixtureCard3({data,colors,logo,font,photo,bgOpacity=1,bgBlur=0,dims}){
+function FixtureCard3({data,colors,logo,font,photo,bgOpacity=1,bgBlur=0,dims,sponsor}){
   const {primary,secondary}=colors;
   return(
     <div style={{width:dims.w,height:dims.h,background:primary,position:"relative",fontFamily:font,overflow:"hidden",borderRadius:12}}>
       <BgPhoto photo={photo} primary={primary} opacity={bgOpacity} blur={bgBlur}/>
+      <SponsorBar sponsor={sponsor} colors={colors}/>
       {!photo&&<>
         <div style={{position:"absolute",bottom:-60,right:-60,width:320,height:320,borderRadius:"50%",border:`40px solid ${secondary}22`,zIndex:0}}/>
         <div style={{position:"absolute",bottom:40,right:40,width:180,height:180,borderRadius:"50%",border:`20px solid ${secondary}15`,zIndex:0}}/>
@@ -220,7 +242,7 @@ function FixtureCard3({data,colors,logo,font,photo,bgOpacity=1,bgBlur=0,dims}){
 
 // ── RESULT CARDS ─────────────────────────────────────────────────
 
-function ResultCardBase({data,colors,logo,font,variant,photo,bgOpacity=1,bgBlur=0,dims}){
+function ResultCardBase({data,colors,logo,font,variant,photo,bgOpacity=1,bgBlur=0,dims,sponsor}){
   const {primary,secondary}=colors;
   const won=parseInt(data.homeScore||0)>parseInt(data.awayScore||0);
   const drew=parseInt(data.homeScore||0)===parseInt(data.awayScore||0);
@@ -230,6 +252,7 @@ function ResultCardBase({data,colors,logo,font,variant,photo,bgOpacity=1,bgBlur=
   if(variant===2){return(
     <div style={{width:dims.w,height:dims.h,background:primary,position:"relative",fontFamily:font,overflow:"hidden",borderRadius:12}}>
       <BgPhoto photo={photo} primary={primary} opacity={bgOpacity} blur={bgBlur}/>
+      <SponsorBar sponsor={sponsor} colors={colors}/>
       {!photo&&<div style={{position:"absolute",inset:0,background:`linear-gradient(180deg, ${primary} 0%, #0d0d0d 60%)`,zIndex:0}}/>}
       <div style={{position:"absolute",top:0,left:0,right:0,height:5,background:rc,zIndex:3}}/>
       <div style={{padding:"28px 32px",display:"flex",flexDirection:"column",height:"100%",boxSizing:"border-box",position:"relative",zIndex:3}}>
@@ -242,7 +265,7 @@ function ResultCardBase({data,colors,logo,font,variant,photo,bgOpacity=1,bgBlur=
           <div style={{fontSize:14,color:"#ccc",marginTop:6,textShadow:"0 1px 6px rgba(0,0,0,0.8)"}}>{data.ourTeam||"Our Team"} <span style={{color:"#555"}}>vs</span> {data.opponent||"Opponent"}</div>
         </div>
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,flex:1}}>
-          {data.motm&&<StatBlock label="Man of the Match ⭐" value={data.motm} colors={colors}/>}
+          {data.motm&&<StatBlock label="Man of the Match" value={data.motm} colors={colors}/>}
           {data.tries&&<StatBlock label="Try Scorers 🏉" value={data.tries} colors={colors}/>}
           {data.conversions&&<StatBlock label="Conversions" value={data.conversions} colors={colors}/>}
           {data.penalties&&<StatBlock label="Penalties" value={data.penalties} colors={colors}/>}
@@ -255,6 +278,7 @@ function ResultCardBase({data,colors,logo,font,variant,photo,bgOpacity=1,bgBlur=
   if(variant===3){return(
     <div style={{width:dims.w,height:dims.h,background:primary,position:"relative",fontFamily:font,overflow:"hidden",borderRadius:12}}>
       <BgPhoto photo={photo} primary={primary} opacity={bgOpacity} blur={bgBlur}/>
+      <SponsorBar sponsor={sponsor} colors={colors}/>
       {!photo&&<>
         <div style={{position:"absolute",left:0,top:0,bottom:0,width:200,background:`${secondary}18`,zIndex:0}}/>
       </>}
@@ -277,7 +301,7 @@ function ResultCardBase({data,colors,logo,font,variant,photo,bgOpacity=1,bgBlur=
           {data.date&&<span style={{color:"#ccc",fontSize:12,opacity:0.7}}>{data.date}</span>}
         </div>
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,flex:1}}>
-          {data.motm&&<StatBlock label="Man of the Match ⭐" value={data.motm} colors={colors}/>}
+          {data.motm&&<StatBlock label="Man of the Match" value={data.motm} colors={colors}/>}
           {data.tries&&<StatBlock label="Try Scorers 🏉" value={data.tries} colors={colors}/>}
           {data.conversions&&<StatBlock label="Conversions" value={data.conversions} colors={colors}/>}
           {data.penalties&&<StatBlock label="Penalties" value={data.penalties} colors={colors}/>}
@@ -291,6 +315,7 @@ function ResultCardBase({data,colors,logo,font,variant,photo,bgOpacity=1,bgBlur=
   return(
     <div style={{width:dims.w,height:dims.h,background:primary,position:"relative",fontFamily:font,overflow:"hidden",borderRadius:12}}>
       <BgPhoto photo={photo} primary={primary} opacity={bgOpacity} blur={bgBlur}/>
+      <SponsorBar sponsor={sponsor} colors={colors}/>
       {!photo&&<div style={{position:"absolute",inset:0,background:`linear-gradient(135deg, ${secondary}22 0%, transparent 50%)`,zIndex:0}}/>}
       <div style={{position:"absolute",top:0,left:0,right:0,height:6,background:secondary,zIndex:3}}/>
       <div style={{padding:"28px 36px",display:"flex",flexDirection:"column",height:"100%",boxSizing:"border-box",position:"relative",zIndex:3}}>
@@ -308,7 +333,7 @@ function ResultCardBase({data,colors,logo,font,variant,photo,bgOpacity=1,bgBlur=
           {data.date&&<span style={{color:"#ccc",fontSize:12,opacity:0.7}}>{data.date}</span>}
         </div>
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:11,flex:1}}>
-          {data.motm&&<StatBlock label="Man of the Match ⭐" value={data.motm} colors={colors}/>}
+          {data.motm&&<StatBlock label="Man of the Match" value={data.motm} colors={colors}/>}
           {data.tries&&<StatBlock label="Try Scorers 🏉" value={data.tries} colors={colors}/>}
           {data.conversions&&<StatBlock label="Conversions" value={data.conversions} colors={colors}/>}
           {data.penalties&&<StatBlock label="Penalties" value={data.penalties} colors={colors}/>}
@@ -321,11 +346,12 @@ function ResultCardBase({data,colors,logo,font,variant,photo,bgOpacity=1,bgBlur=
 
 // ── PLAYER CARDS ─────────────────────────────────────────────────
 
-function PlayerCard1({data,colors,logo,font,photo,bgOpacity=1,bgBlur=0,dims}){
+function PlayerCard1({data,colors,logo,font,photo,bgOpacity=1,bgBlur=0,dims,sponsor}){
   const {primary,secondary}=colors;
   return(
     <div style={{width:dims.w,height:dims.h,background:primary,position:"relative",fontFamily:font,overflow:"hidden",borderRadius:12}}>
       <BgPhoto photo={photo} primary={primary} opacity={bgOpacity} blur={bgBlur}/>
+      <SponsorBar sponsor={sponsor} colors={colors}/>
       {!photo&&<div style={{position:"absolute",inset:0,background:`radial-gradient(circle at 80% 20%, ${secondary}33 0%, transparent 60%)`,zIndex:0}}/>}
       <div style={{position:"absolute",top:0,left:0,right:0,height:5,background:secondary,zIndex:3}}/>
       <div style={{padding:"28px 36px",display:"flex",flexDirection:"column",height:"100%",boxSizing:"border-box",position:"relative",zIndex:3}}>
@@ -350,11 +376,12 @@ function PlayerCard1({data,colors,logo,font,photo,bgOpacity=1,bgBlur=0,dims}){
   );
 }
 
-function PlayerCard2({data,colors,logo,font,photo,bgOpacity=1,bgBlur=0,dims}){
+function PlayerCard2({data,colors,logo,font,photo,bgOpacity=1,bgBlur=0,dims,sponsor}){
   const {primary,secondary}=colors;
   return(
     <div style={{width:dims.w,height:dims.h,background:"#0d0d0d",position:"relative",fontFamily:font,overflow:"hidden",borderRadius:12}}>
       <BgPhoto photo={photo} primary={primary} opacity={bgOpacity} blur={bgBlur}/>
+      <SponsorBar sponsor={sponsor} colors={colors}/>
       {!photo&&<div style={{position:"absolute",inset:0,background:`linear-gradient(135deg, ${primary} 0%, #1a1a1a 100%)`,zIndex:0}}/>}
       <div style={{padding:"28px 28px 24px",display:"flex",flexDirection:"column",height:"100%",boxSizing:"border-box",position:"relative",zIndex:3,justifyContent:"flex-end"}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-end",marginBottom:12}}>
@@ -379,11 +406,12 @@ function PlayerCard2({data,colors,logo,font,photo,bgOpacity=1,bgBlur=0,dims}){
   );
 }
 
-function PlayerCard3({data,colors,logo,font,photo,bgOpacity=1,bgBlur=0,dims}){
+function PlayerCard3({data,colors,logo,font,photo,bgOpacity=1,bgBlur=0,dims,sponsor}){
   const {primary,secondary}=colors; const txt=ctxt(primary);
   return(
     <div style={{width:dims.w,height:dims.h,background:primary,position:"relative",fontFamily:font,overflow:"hidden",borderRadius:12}}>
       <BgPhoto photo={photo} primary={primary} opacity={bgOpacity} blur={bgBlur}/>
+      <SponsorBar sponsor={sponsor} colors={colors}/>
       {!photo&&<div style={{position:"absolute",right:-40,top:-40,width:300,height:300,borderRadius:"50%",background:`${secondary}18`,zIndex:0}}/>}
       <div style={{position:"absolute",top:0,left:0,right:0,height:5,background:secondary,zIndex:3}}/>
       <div style={{padding:"28px 32px",display:"flex",flexDirection:"column",height:"100%",boxSizing:"border-box",position:"relative",zIndex:3}}>
@@ -411,11 +439,12 @@ function PlayerCard3({data,colors,logo,font,photo,bgOpacity=1,bgBlur=0,dims}){
 // ── AWARD CARDS (MOTM + DOTD) ────────────────────────────────────
 // Shared card component. Pass `colors` already swapped for DOTD.
 
-function AwardCard1({data,awardLabel,colors,logo,font,photo,bgOpacity=1,bgBlur=0,dims}){
+function AwardCard1({data,awardLabel,colors,logo,font,photo,bgOpacity=1,bgBlur=0,dims,sponsor}){
   const {primary,secondary}=colors;
   return(
     <div style={{width:dims.w,height:dims.h,background:primary,position:"relative",fontFamily:font,overflow:"hidden",borderRadius:12}}>
       <BgPhoto photo={photo} primary={primary} opacity={bgOpacity} blur={bgBlur}/>
+      <SponsorBar sponsor={sponsor} colors={colors}/>
       {!photo&&<div style={{position:"absolute",inset:0,background:`radial-gradient(circle at 80% 20%, ${secondary}33 0%, transparent 60%)`,zIndex:0}}/>}
       <div style={{position:"absolute",top:0,left:0,right:0,height:5,background:secondary,zIndex:3}}/>
       <div style={{padding:"28px 36px",display:"flex",flexDirection:"column",height:"100%",boxSizing:"border-box",position:"relative",zIndex:3}}>
@@ -423,7 +452,7 @@ function AwardCard1({data,awardLabel,colors,logo,font,photo,bgOpacity=1,bgBlur=0
           {logo&&<img src={logo} style={{height:56,width:56,objectFit:"contain",filter:"drop-shadow(0 2px 12px rgba(0,0,0,0.7))"}}/>}
         </div>
         <div style={{marginTop:"auto"}}>
-          <div style={{fontSize:34,fontWeight:900,color:"#fff",lineHeight:1,textTransform:"uppercase",letterSpacing:-0.5,marginBottom:6,textShadow:"0 2px 12px rgba(0,0,0,0.8)"}}>{awardLabel.replace(" ⭐","")}{awardLabel.includes("⭐")&&<span style={{color:secondary}}> ⭐</span>}</div>
+          <div style={{fontSize:34,fontWeight:900,color:"#fff",lineHeight:1,textTransform:"uppercase",letterSpacing:-0.5,marginBottom:6,textShadow:"0 2px 12px rgba(0,0,0,0.8)"}}>{awardLabel}</div>
           {data.shirtNumber&&<div style={{fontSize:72,fontWeight:900,color:`${secondary}55`,lineHeight:1,marginBottom:-10,fontFamily:"monospace"}}>{data.shirtNumber}</div>}
           <div style={{fontSize:40,fontWeight:800,color:"#fff",lineHeight:1.05,textShadow:"0 2px 12px rgba(0,0,0,0.8)",marginBottom:3}}>{data.playerName||"Player Name"}</div>
           <div style={{fontSize:16,color:secondary,letterSpacing:2,marginBottom:16}}>{data.position||"Position"}</div>
@@ -440,14 +469,15 @@ function AwardCard1({data,awardLabel,colors,logo,font,photo,bgOpacity=1,bgBlur=0
   );
 }
 
-function AwardCard2({data,awardLabel,colors,logo,font,photo,bgOpacity=1,bgBlur=0,dims}){
+function AwardCard2({data,awardLabel,colors,logo,font,photo,bgOpacity=1,bgBlur=0,dims,sponsor}){
   const {primary,secondary}=colors;
   return(
     <div style={{width:dims.w,height:dims.h,background:"#0d0d0d",position:"relative",fontFamily:font,overflow:"hidden",borderRadius:12}}>
       <BgPhoto photo={photo} primary={primary} opacity={bgOpacity} blur={bgBlur}/>
+      <SponsorBar sponsor={sponsor} colors={colors}/>
       {!photo&&<div style={{position:"absolute",inset:0,background:`linear-gradient(135deg, ${primary} 0%, #1a1a1a 100%)`,zIndex:0}}/>}
       <div style={{padding:"28px 28px 24px",display:"flex",flexDirection:"column",height:"100%",boxSizing:"border-box",position:"relative",zIndex:3,justifyContent:"flex-end"}}>
-        <div style={{fontSize:34,fontWeight:900,color:"#fff",lineHeight:1,textTransform:"uppercase",letterSpacing:-0.5,marginBottom:10,textShadow:"0 2px 12px rgba(0,0,0,0.8)"}}>{awardLabel.replace(" ⭐","")}{awardLabel.includes("⭐")&&<span style={{color:secondary}}> ⭐</span>}</div>
+        <div style={{fontSize:34,fontWeight:900,color:"#fff",lineHeight:1,textTransform:"uppercase",letterSpacing:-0.5,marginBottom:10,textShadow:"0 2px 12px rgba(0,0,0,0.8)"}}>{awardLabel}</div>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-end",marginBottom:12}}>
           <div>
             {data.shirtNumber&&<div style={{fontSize:56,fontWeight:900,color:secondary,lineHeight:1,fontFamily:"monospace",marginBottom:-4}}>{data.shirtNumber}</div>}
@@ -470,11 +500,12 @@ function AwardCard2({data,awardLabel,colors,logo,font,photo,bgOpacity=1,bgBlur=0
   );
 }
 
-function AwardCard3({data,awardLabel,colors,logo,font,photo,bgOpacity=1,bgBlur=0,dims}){
+function AwardCard3({data,awardLabel,colors,logo,font,photo,bgOpacity=1,bgBlur=0,dims,sponsor}){
   const {primary,secondary}=colors;
   return(
     <div style={{width:dims.w,height:dims.h,background:primary,position:"relative",fontFamily:font,overflow:"hidden",borderRadius:12}}>
       <BgPhoto photo={photo} primary={primary} opacity={bgOpacity} blur={bgBlur}/>
+      <SponsorBar sponsor={sponsor} colors={colors}/>
       {!photo&&<div style={{position:"absolute",right:-40,top:-40,width:300,height:300,borderRadius:"50%",background:`${secondary}18`,zIndex:0}}/>}
       <div style={{position:"absolute",top:0,left:0,right:0,height:5,background:secondary,zIndex:3}}/>
       <div style={{padding:"28px 32px",display:"flex",flexDirection:"column",height:"100%",boxSizing:"border-box",position:"relative",zIndex:3}}>
@@ -482,7 +513,7 @@ function AwardCard3({data,awardLabel,colors,logo,font,photo,bgOpacity=1,bgBlur=0
           {logo&&<img src={logo} style={{height:52,width:52,objectFit:"contain",filter:"drop-shadow(0 2px 12px rgba(0,0,0,0.7))"}}/>}
         </div>
         <div style={{marginBottom:8}}>
-          <div style={{fontSize:34,fontWeight:900,color:"#fff",lineHeight:1,textTransform:"uppercase",letterSpacing:-0.5,marginBottom:10,textShadow:"0 2px 12px rgba(0,0,0,0.8)"}}>{awardLabel.replace(" ⭐","")}{awardLabel.includes("⭐")&&<span style={{color:secondary}}> ⭐</span>}</div>
+          <div style={{fontSize:34,fontWeight:900,color:"#fff",lineHeight:1,textTransform:"uppercase",letterSpacing:-0.5,marginBottom:10,textShadow:"0 2px 12px rgba(0,0,0,0.8)"}}>{awardLabel}</div>
           {data.shirtNumber&&<div style={{fontSize:64,fontWeight:900,color:`${secondary}44`,lineHeight:1,marginBottom:-8,fontFamily:"monospace"}}>{data.shirtNumber}</div>}
           <div style={{fontSize:32,fontWeight:800,color:"#fff",lineHeight:1.05,marginBottom:3,textShadow:"0 2px 12px rgba(0,0,0,0.8)"}}>{data.playerName||"Player Name"}</div>
           <div style={{fontSize:14,color:secondary,letterSpacing:2,marginBottom:14}}>{data.position||"Position"}</div>
@@ -499,7 +530,7 @@ function AwardCard3({data,awardLabel,colors,logo,font,photo,bgOpacity=1,bgBlur=0
   );
 }
 
-function TeamAnnouncementCard({data,colors,logo,font,variant,photo,bgOpacity=1,bgBlur=0,dims}){
+function TeamAnnouncementCard({data,colors,logo,font,variant,photo,bgOpacity=1,bgBlur=0,dims,sponsor}){
   const {primary,secondary}=colors; const txt=ctxt(primary); const txtS=ctxt(secondary);
   const starters=data.players.slice(0,15);
   const reps=data.players.slice(15,23).filter(p=>p.name);
@@ -534,6 +565,7 @@ function TeamAnnouncementCard({data,colors,logo,font,variant,photo,bgOpacity=1,b
     return(
       <div style={{width:dims.w,height:dims.h,background:primary,position:"relative",fontFamily:font,overflow:"hidden",borderRadius:12}}>
         <BgPhoto photo={photo} primary={primary} opacity={bgOpacity} blur={bgBlur}/>
+      <SponsorBar sponsor={sponsor} colors={colors}/>
         {!photo&&<div style={{position:"absolute",inset:0,background:`linear-gradient(135deg, ${secondary}18 0%, transparent 50%)`,zIndex:0}}/>}
         <div style={{position:"absolute",top:0,left:0,right:0,height:5,background:secondary,zIndex:3}}/>
         <div style={{padding:"18px 20px 14px",display:"flex",flexDirection:"column",height:"100%",boxSizing:"border-box",position:"relative",zIndex:3}}>
@@ -557,6 +589,7 @@ function TeamAnnouncementCard({data,colors,logo,font,variant,photo,bgOpacity=1,b
     return(
       <div style={{width:dims.w,height:dims.h,background:"#0d0d0d",position:"relative",fontFamily:font,overflow:"hidden",borderRadius:12}}>
         <BgPhoto photo={photo} primary="#0d0d0d" opacity={bgOpacity} blur={bgBlur}/>
+        <SponsorBar sponsor={sponsor} colors={colors}/>
         <div style={{position:"absolute",top:0,left:0,right:0,height:5,background:secondary,zIndex:3}}/>
         <div style={{padding:"18px 22px 14px",display:"flex",flexDirection:"column",height:"100%",boxSizing:"border-box",position:"relative",zIndex:3}}>
           <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:14}}>
@@ -592,6 +625,7 @@ function TeamAnnouncementCard({data,colors,logo,font,variant,photo,bgOpacity=1,b
   return(
     <div style={{width:dims.w,height:dims.h,background:primary,position:"relative",fontFamily:font,overflow:"hidden",borderRadius:12}}>
       <BgPhoto photo={photo} primary={primary} opacity={bgOpacity} blur={bgBlur}/>
+      <SponsorBar sponsor={sponsor} colors={colors}/>
       <div style={{position:"absolute",left:-6,top:90,width:10,height:56,background:secondary,borderRadius:2,zIndex:3}}/>
       <div style={{position:"absolute",left:-6,top:156,width:10,height:28,background:secondary,opacity:0.45,borderRadius:2,zIndex:3}}/>
       <div style={{position:"absolute",top:0,left:0,right:0,height:5,background:secondary,zIndex:3}}/>
@@ -731,6 +765,7 @@ function RugbySocialGenerator(){
   const [announcement,setAnnouncement]=useState({teamName:"",opponent:"",date:"",players:Array(23).fill(null).map(()=>({name:"",captain:false,vice:false}))});
   const [motm,setMotm]=useState({playerName:"",position:"",shirtNumber:"",caps:"",tries:"",age:"",hometown:"",reason:""});
   const [dotd,setDotd]=useState({playerName:"",position:"",shirtNumber:"",caps:"",tries:"",age:"",hometown:"",reason:"",awardName:"Dick of the Day",swapColors:true});
+  const [sponsor,setSponsor]=useState({show:false,name:"",position:"bottom"});
 
   const activeFont=FONT_OPTIONS.find(f=>f.id===fontId)?.stack||FONT_OPTIONS[0].stack;
   const tmpl=templates[tab];
@@ -892,6 +927,27 @@ function RugbySocialGenerator(){
                 ))}
               </div>
             </div>
+
+            {/* Sponsorship */}
+            <div style={{marginTop:14,padding:"12px",background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.08)",borderRadius:10}}>
+              <Toggle label="Show sponsor on all cards" checked={sponsor.show} onChange={v=>setSponsor(s=>({...s,show:v}))}/>
+              {sponsor.show&&<>
+                <div style={{marginBottom:10}}>
+                  <label style={{display:"block",fontSize:10,letterSpacing:2,textTransform:"uppercase",color:"#777",marginBottom:4}}>Sponsor Name</label>
+                  <input value={sponsor.name} onChange={e=>setSponsor(s=>({...s,name:e.target.value}))} placeholder="Acme Rugby Supplies" style={{width:"100%",background:"rgba(255,255,255,0.06)",border:"1px solid rgba(255,255,255,0.12)",borderRadius:8,padding:"9px 11px",color:"#f0f0f0",fontSize:14,fontFamily:"inherit",boxSizing:"border-box",outline:"none"}}/>
+                </div>
+                <div>
+                  <div style={{fontSize:10,letterSpacing:2,textTransform:"uppercase",color:"#777",marginBottom:6}}>Position</div>
+                  <div style={{display:"flex",gap:6}}>
+                    {["top","bottom"].map(pos=>(
+                      <button key={pos} onClick={()=>setSponsor(s=>({...s,position:pos}))} style={{flex:1,padding:"8px",borderRadius:8,border:sponsor.position===pos?`1px solid ${colors.secondary}`:"1px solid rgba(255,255,255,0.09)",background:sponsor.position===pos?`${colors.secondary}22`:"rgba(255,255,255,0.04)",color:sponsor.position===pos?colors.secondary:"#777",cursor:"pointer",fontSize:12,fontWeight:sponsor.position===pos?700:400,textTransform:"capitalize"}}>
+                        {pos === "top" ? "↑ Top" : "↓ Bottom"}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </>}
+            </div>
           </div>
 
           {/* Card tabs */}
@@ -937,7 +993,7 @@ function RugbySocialGenerator(){
             </div>
             <Field label="Date" value={result.date} onChange={v=>setResult(r=>({...r,date:v}))} placeholder="Sat 8 Mar 2025"/>
             <Field label="Competition" value={result.competition} onChange={v=>setResult(r=>({...r,competition:v}))} placeholder="URC"/>
-            <Field label="Man of the Match ⭐" value={result.motm} onChange={v=>setResult(r=>({...r,motm:v}))} placeholder="J. Thompson"/>
+            <Field label="Man of the Match" value={result.motm} onChange={v=>setResult(r=>({...r,motm:v}))} placeholder="J. Thompson"/>
             <Field label="Try Scorers" value={result.tries} onChange={v=>setResult(r=>({...r,tries:v}))} placeholder="Smith (2), Jones, Brown" multiline/>
             <Field label="Conversions" value={result.conversions} onChange={v=>setResult(r=>({...r,conversions:v}))} placeholder="Williams (4/5)"/>
             <Field label="Penalties" value={result.penalties} onChange={v=>setResult(r=>({...r,penalties:v}))} placeholder="Williams (2)"/>
@@ -1017,20 +1073,20 @@ function RugbySocialGenerator(){
           <div style={{paddingTop:tab==="announcement"?0:32}}>
             <div style={{fontSize:10,letterSpacing:3,textTransform:"uppercase",color:"#333",textAlign:"center",marginBottom:16}}>Live Preview</div>
             <div ref={cardRef} style={{boxShadow:"0 20px 60px rgba(0,0,0,0.6)",borderRadius:12}}>
-              {tab==="fixture"&&tmpl===1&&<FixtureCard1 data={fixture} colors={colors} logo={logo} font={activeFont} photo={currentPhoto} bgOpacity={currentBg.opacity} bgBlur={currentBg.blur} dims={dims}/>}
-              {tab==="fixture"&&tmpl===2&&<FixtureCard2 data={fixture} colors={colors} logo={logo} font={activeFont} photo={currentPhoto} bgOpacity={currentBg.opacity} bgBlur={currentBg.blur} dims={dims}/>}
-              {tab==="fixture"&&tmpl===3&&<FixtureCard3 data={fixture} colors={colors} logo={logo} font={activeFont} photo={currentPhoto} bgOpacity={currentBg.opacity} bgBlur={currentBg.blur} dims={dims}/>}
-              {tab==="result"&&<ResultCardBase data={result} colors={colors} logo={logo} font={activeFont} variant={tmpl} photo={currentPhoto} bgOpacity={currentBg.opacity} bgBlur={currentBg.blur} dims={dims}/>}
-              {tab==="player"&&tmpl===1&&<PlayerCard1 data={player} colors={colors} logo={logo} font={activeFont} photo={currentPhoto} bgOpacity={currentBg.opacity} bgBlur={currentBg.blur} dims={dims}/>}
-              {tab==="player"&&tmpl===2&&<PlayerCard2 data={player} colors={colors} logo={logo} font={activeFont} photo={currentPhoto} bgOpacity={currentBg.opacity} bgBlur={currentBg.blur} dims={dims}/>}
-              {tab==="player"&&tmpl===3&&<PlayerCard3 data={player} colors={colors} logo={logo} font={activeFont} photo={currentPhoto} bgOpacity={currentBg.opacity} bgBlur={currentBg.blur} dims={dims}/>}
-              {tab==="announcement"&&<TeamAnnouncementCard data={announcement} colors={colors} logo={logo} font={activeFont} variant={tmpl} photo={currentPhoto} bgOpacity={currentBg.opacity} bgBlur={currentBg.blur} dims={dims}/>}
-              {tab==="motm"&&tmpl===1&&<AwardCard1 data={motm} awardLabel="Man of the Match ⭐" colors={colors} logo={logo} font={activeFont} photo={currentPhoto} bgOpacity={currentBg.opacity} bgBlur={currentBg.blur} dims={dims}/>}
-              {tab==="motm"&&tmpl===2&&<AwardCard2 data={motm} awardLabel="Man of the Match ⭐" colors={colors} logo={logo} font={activeFont} photo={currentPhoto} bgOpacity={currentBg.opacity} bgBlur={currentBg.blur} dims={dims}/>}
-              {tab==="motm"&&tmpl===3&&<AwardCard3 data={motm} awardLabel="Man of the Match ⭐" colors={colors} logo={logo} font={activeFont} photo={currentPhoto} bgOpacity={currentBg.opacity} bgBlur={currentBg.blur} dims={dims}/>}
-              {tab==="dotd"&&tmpl===1&&<AwardCard1 data={dotd} awardLabel={dotd.awardName||"Dick of the Day"} colors={dotdColors} logo={logo} font={activeFont} photo={currentPhoto} bgOpacity={currentBg.opacity} bgBlur={currentBg.blur} dims={dims}/>}
-              {tab==="dotd"&&tmpl===2&&<AwardCard2 data={dotd} awardLabel={dotd.awardName||"Dick of the Day"} colors={dotdColors} logo={logo} font={activeFont} photo={currentPhoto} bgOpacity={currentBg.opacity} bgBlur={currentBg.blur} dims={dims}/>}
-              {tab==="dotd"&&tmpl===3&&<AwardCard3 data={dotd} awardLabel={dotd.awardName||"Dick of the Day"} colors={dotdColors} logo={logo} font={activeFont} photo={currentPhoto} bgOpacity={currentBg.opacity} bgBlur={currentBg.blur} dims={dims}/>}
+              {tab==="fixture"&&tmpl===1&&<FixtureCard1 data={fixture} colors={colors} logo={logo} font={activeFont} photo={currentPhoto} bgOpacity={currentBg.opacity} bgBlur={currentBg.blur} dims={dims} sponsor={sponsor}/>}
+              {tab==="fixture"&&tmpl===2&&<FixtureCard2 data={fixture} colors={colors} logo={logo} font={activeFont} photo={currentPhoto} bgOpacity={currentBg.opacity} bgBlur={currentBg.blur} dims={dims} sponsor={sponsor}/>}
+              {tab==="fixture"&&tmpl===3&&<FixtureCard3 data={fixture} colors={colors} logo={logo} font={activeFont} photo={currentPhoto} bgOpacity={currentBg.opacity} bgBlur={currentBg.blur} dims={dims} sponsor={sponsor}/>}
+              {tab==="result"&&<ResultCardBase data={result} colors={colors} logo={logo} font={activeFont} variant={tmpl} photo={currentPhoto} bgOpacity={currentBg.opacity} bgBlur={currentBg.blur} dims={dims} sponsor={sponsor}/>}
+              {tab==="player"&&tmpl===1&&<PlayerCard1 data={player} colors={colors} logo={logo} font={activeFont} photo={currentPhoto} bgOpacity={currentBg.opacity} bgBlur={currentBg.blur} dims={dims} sponsor={sponsor}/>}
+              {tab==="player"&&tmpl===2&&<PlayerCard2 data={player} colors={colors} logo={logo} font={activeFont} photo={currentPhoto} bgOpacity={currentBg.opacity} bgBlur={currentBg.blur} dims={dims} sponsor={sponsor}/>}
+              {tab==="player"&&tmpl===3&&<PlayerCard3 data={player} colors={colors} logo={logo} font={activeFont} photo={currentPhoto} bgOpacity={currentBg.opacity} bgBlur={currentBg.blur} dims={dims} sponsor={sponsor}/>}
+              {tab==="announcement"&&<TeamAnnouncementCard data={announcement} colors={colors} logo={logo} font={activeFont} variant={tmpl} photo={currentPhoto} bgOpacity={currentBg.opacity} bgBlur={currentBg.blur} dims={dims} sponsor={sponsor}/>}
+              {tab==="motm"&&tmpl===1&&<AwardCard1 data={motm} awardLabel="Man of the Match" colors={colors} logo={logo} font={activeFont} photo={currentPhoto} bgOpacity={currentBg.opacity} bgBlur={currentBg.blur} dims={dims} sponsor={sponsor}/>}
+              {tab==="motm"&&tmpl===2&&<AwardCard2 data={motm} awardLabel="Man of the Match" colors={colors} logo={logo} font={activeFont} photo={currentPhoto} bgOpacity={currentBg.opacity} bgBlur={currentBg.blur} dims={dims} sponsor={sponsor}/>}
+              {tab==="motm"&&tmpl===3&&<AwardCard3 data={motm} awardLabel="Man of the Match" colors={colors} logo={logo} font={activeFont} photo={currentPhoto} bgOpacity={currentBg.opacity} bgBlur={currentBg.blur} dims={dims} sponsor={sponsor}/>}
+              {tab==="dotd"&&tmpl===1&&<AwardCard1 data={dotd} awardLabel={dotd.awardName||"Dick of the Day"} colors={dotdColors} logo={logo} font={activeFont} photo={currentPhoto} bgOpacity={currentBg.opacity} bgBlur={currentBg.blur} dims={dims} sponsor={sponsor}/>}
+              {tab==="dotd"&&tmpl===2&&<AwardCard2 data={dotd} awardLabel={dotd.awardName||"Dick of the Day"} colors={dotdColors} logo={logo} font={activeFont} photo={currentPhoto} bgOpacity={currentBg.opacity} bgBlur={currentBg.blur} dims={dims} sponsor={sponsor}/>}
+              {tab==="dotd"&&tmpl===3&&<AwardCard3 data={dotd} awardLabel={dotd.awardName||"Dick of the Day"} colors={dotdColors} logo={logo} font={activeFont} photo={currentPhoto} bgOpacity={currentBg.opacity} bgBlur={currentBg.blur} dims={dims} sponsor={sponsor}/>}
             </div>
             <div style={{textAlign:"center",marginTop:12,marginBottom:24,fontSize:11,color:"#2a2a2a"}}>Instagram / Twitter ready · 1080px equivalent</div>
           </div>
