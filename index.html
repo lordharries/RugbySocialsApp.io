@@ -262,7 +262,6 @@ function ResultCardBase({data,colors,logo,font,variant,photo,bgOpacity=1,bgBlur=
   const rc=won?"#4ade80":drew?secondary:"#f87171";
   const isBottom=(data.scorePosition||"top")==="bottom";
 
-  // Inline stats block — shared across all variants
   const statsRows=(
     <div style={{display:"flex",flexDirection:"column",gap:5,marginBottom:8}}>
       {data.motm&&<div style={{display:"flex",gap:8,fontSize:13}}><span style={{color:secondary,fontWeight:700,minWidth:130,letterSpacing:0.5}}>Man of the Match</span><span style={{color:"#fff"}}>{data.motm}</span></div>}
@@ -273,74 +272,35 @@ function ResultCardBase({data,colors,logo,font,variant,photo,bgOpacity=1,bgBlur=
     </div>
   );
 
-  if(variant===2){
-    const scoreContent=(
-      <>
-        <div style={{textAlign:"center",marginBottom:10}}>
-          <div style={{fontSize:72,fontWeight:900,color:"#fff",letterSpacing:-4,lineHeight:1,textShadow:"0 2px 20px rgba(0,0,0,0.8)"}}>{data.homeScore??"–"}<span style={{color:rc,margin:"0 4px"}}>:</span>{data.awayScore??"–"}</div>
-          <div style={{fontSize:14,color:"#ccc",marginTop:6}}>{clubName||"Our Team"} <span style={{color:"#555"}}>vs</span> {data.opponent||"Opponent"}</div>
-        </div>
-        {statsRows}
-      </>
-    );
-    return(
-      <div style={{width:dims.w,height:dims.h,background:primary,position:"relative",fontFamily:font,overflow:"hidden",borderRadius:12}}>
-        <BgPhoto photo={photo} primary={primary} opacity={bgOpacity} blur={bgBlur}/>
-        <SponsorBar sponsor={sponsor} colors={colors}/>
-        {!photo&&<div style={{position:"absolute",inset:0,background:`linear-gradient(180deg, ${primary} 0%, #0d0d0d 60%)`,zIndex:0}}/>}
-        <div style={{position:"absolute",top:0,left:0,right:0,height:5,background:rc,zIndex:3}}/>
-        <div style={{padding:"28px 32px",paddingTop:`calc(28px + ${sponsorPad(sponsor).top}px)`,paddingBottom:`calc(28px + ${sponsorPad(sponsor).bottom}px)`,display:"flex",flexDirection:"column",height:"100%",boxSizing:"border-box",position:"relative",zIndex:3}}>
-          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
-            {logo&&<img src={logo} style={{height:50,width:50,objectFit:"contain",filter:"drop-shadow(0 2px 12px rgba(0,0,0,0.7))"}}/>}
-            <div style={{background:rc,color:"#000",padding:"5px 18px",borderRadius:4,fontSize:13,fontWeight:800,letterSpacing:3,textTransform:"uppercase"}}>{label}</div>
-          </div>
-          {!isBottom && scoreContent}
-          {isBottom && <div style={{flex:1}}/>}
-          {isBottom && scoreContent}
-        </div>
+  const score2=(
+    <>
+      <div style={{textAlign:"center",marginBottom:10}}>
+        <div style={{fontSize:72,fontWeight:900,color:"#fff",letterSpacing:-4,lineHeight:1,textShadow:"0 2px 20px rgba(0,0,0,0.8)"}}>{data.homeScore??"–"}<span style={{color:rc,margin:"0 4px"}}>:</span>{data.awayScore??"–"}</div>
+        <div style={{fontSize:14,color:"#ccc",marginTop:6}}>{clubName||"Our Team"} <span style={{color:"#555"}}>vs</span> {data.opponent||"Opponent"}</div>
       </div>
-    );
-  }
+      {statsRows}
+    </>
+  );
 
-  if(variant===3){
-    const scoreContent=(
-      <>
-        <div style={{display:"flex",alignItems:"center",gap:16,marginBottom:10}}>
-          <div style={{flex:1}}><div style={{fontSize:11,color:secondary,letterSpacing:2,textTransform:"uppercase",marginBottom:2}}>{clubName||"Our Team"}</div></div>
-          <div style={{textAlign:"center"}}>
-            <div style={{fontSize:56,fontWeight:900,color:"#fff",letterSpacing:-2,lineHeight:1,textShadow:"0 2px 16px rgba(0,0,0,0.8)"}}>{data.homeScore??"–"}–{data.awayScore??"–"}</div>
-            <div style={{display:"inline-block",background:rc,color:"#000",padding:"2px 12px",borderRadius:20,fontSize:11,fontWeight:700,marginTop:4}}>{label}</div>
-          </div>
-          <div style={{flex:1,textAlign:"right"}}><div style={{fontSize:11,color:secondary,letterSpacing:2,textTransform:"uppercase",marginBottom:2}}>{data.opponent||"Opponent"}</div></div>
+  const score3=(
+    <>
+      <div style={{display:"flex",alignItems:"center",gap:16,marginBottom:10}}>
+        <div style={{flex:1}}><div style={{fontSize:11,color:secondary,letterSpacing:2,textTransform:"uppercase",marginBottom:2}}>{clubName||"Our Team"}</div></div>
+        <div style={{textAlign:"center"}}>
+          <div style={{fontSize:56,fontWeight:900,color:"#fff",letterSpacing:-2,lineHeight:1,textShadow:"0 2px 16px rgba(0,0,0,0.8)"}}>{data.homeScore??"–"}–{data.awayScore??"–"}</div>
+          <div style={{display:"inline-block",background:rc,color:"#000",padding:"2px 12px",borderRadius:20,fontSize:11,fontWeight:700,marginTop:4}}>{label}</div>
         </div>
-        <div style={{borderTop:`1px solid ${secondary}33`,borderBottom:`1px solid ${secondary}33`,padding:"8px 0",marginBottom:10,display:"flex",gap:20}}>
-          {data.competition&&<span style={{color:secondary,fontSize:12}}>{data.competition}</span>}
-          {data.date&&<span style={{color:"#ccc",fontSize:12,opacity:0.7}}>{data.date}</span>}
-        </div>
-        {statsRows}
-      </>
-    );
-    return(
-      <div style={{width:dims.w,height:dims.h,background:primary,position:"relative",fontFamily:font,overflow:"hidden",borderRadius:12}}>
-        <BgPhoto photo={photo} primary={primary} opacity={bgOpacity} blur={bgBlur}/>
-        <SponsorBar sponsor={sponsor} colors={colors}/>
-        {!photo&&<div style={{position:"absolute",left:0,top:0,bottom:0,width:200,background:`${secondary}18`,zIndex:0}}/>}
-        <div style={{position:"absolute",left:0,top:0,bottom:0,width:5,background:secondary,zIndex:3}}/>
-        <div style={{padding:"28px 32px",paddingTop:`calc(28px + ${sponsorPad(sponsor).top}px)`,paddingBottom:`calc(28px + ${sponsorPad(sponsor).bottom}px)`,display:"flex",flexDirection:"column",height:"100%",boxSizing:"border-box",position:"relative",zIndex:3}}>
-          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:12}}>
-            <div style={{fontSize:10,letterSpacing:4,color:secondary,textTransform:"uppercase"}}>Match Result</div>
-            {logo&&<img src={logo} style={{height:46,width:46,objectFit:"contain",filter:"drop-shadow(0 2px 12px rgba(0,0,0,0.7))"}}/>}
-          </div>
-          {!isBottom && scoreContent}
-          {isBottom && <div style={{flex:1}}/>}
-          {isBottom && scoreContent}
-        </div>
+        <div style={{flex:1,textAlign:"right"}}><div style={{fontSize:11,color:secondary,letterSpacing:2,textTransform:"uppercase",marginBottom:2}}>{data.opponent||"Opponent"}</div></div>
       </div>
-    );
-  }
+      <div style={{borderTop:`1px solid ${secondary}33`,borderBottom:`1px solid ${secondary}33`,padding:"8px 0",marginBottom:10,display:"flex",gap:20}}>
+        {data.competition&&<span style={{color:secondary,fontSize:12}}>{data.competition}</span>}
+        {data.date&&<span style={{color:"#ccc",fontSize:12,opacity:0.7}}>{data.date}</span>}
+      </div>
+      {statsRows}
+    </>
+  );
 
-  // variant 1
-  const scoreContent=(
+  const score1=(
     <>
       <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:10}}>
         <div style={{flex:1}}><div style={{fontSize:11,color:secondary,letterSpacing:2,textTransform:"uppercase",marginBottom:3}}>{data.isHome?"Home":"Away"}</div><div style={{fontSize:20,fontWeight:700,color:"#fff",textShadow:"0 1px 8px rgba(0,0,0,0.8)"}}>{clubName||"Our Team"}</div></div>
@@ -354,6 +314,43 @@ function ResultCardBase({data,colors,logo,font,variant,photo,bgOpacity=1,bgBlur=
       {statsRows}
     </>
   );
+
+  if(variant===2){return(
+    <div style={{width:dims.w,height:dims.h,background:primary,position:"relative",fontFamily:font,overflow:"hidden",borderRadius:12}}>
+      <BgPhoto photo={photo} primary={primary} opacity={bgOpacity} blur={bgBlur}/>
+      <SponsorBar sponsor={sponsor} colors={colors}/>
+      {!photo&&<div style={{position:"absolute",inset:0,background:`linear-gradient(180deg, ${primary} 0%, #0d0d0d 60%)`,zIndex:0}}/>}
+      <div style={{position:"absolute",top:0,left:0,right:0,height:5,background:rc,zIndex:3}}/>
+      <div style={{padding:"28px 32px",paddingTop:`calc(28px + ${sponsorPad(sponsor).top}px)`,paddingBottom:`calc(28px + ${sponsorPad(sponsor).bottom}px)`,display:"flex",flexDirection:"column",height:"100%",boxSizing:"border-box",position:"relative",zIndex:3}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
+          {logo&&<img src={logo} style={{height:50,width:50,objectFit:"contain",filter:"drop-shadow(0 2px 12px rgba(0,0,0,0.7))"}}/>}
+          <div style={{background:rc,color:"#000",padding:"5px 18px",borderRadius:4,fontSize:13,fontWeight:800,letterSpacing:3,textTransform:"uppercase"}}>{label}</div>
+        </div>
+        {!isBottom&&score2}
+        {isBottom&&<div style={{flex:1}}/>}
+        {isBottom&&score2}
+      </div>
+    </div>
+  );}
+
+  if(variant===3){return(
+    <div style={{width:dims.w,height:dims.h,background:primary,position:"relative",fontFamily:font,overflow:"hidden",borderRadius:12}}>
+      <BgPhoto photo={photo} primary={primary} opacity={bgOpacity} blur={bgBlur}/>
+      <SponsorBar sponsor={sponsor} colors={colors}/>
+      {!photo&&<div style={{position:"absolute",left:0,top:0,bottom:0,width:200,background:`${secondary}18`,zIndex:0}}/>}
+      <div style={{position:"absolute",left:0,top:0,bottom:0,width:5,background:secondary,zIndex:3}}/>
+      <div style={{padding:"28px 32px",paddingTop:`calc(28px + ${sponsorPad(sponsor).top}px)`,paddingBottom:`calc(28px + ${sponsorPad(sponsor).bottom}px)`,display:"flex",flexDirection:"column",height:"100%",boxSizing:"border-box",position:"relative",zIndex:3}}>
+        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:12}}>
+          <div style={{fontSize:10,letterSpacing:4,color:secondary,textTransform:"uppercase"}}>Match Result</div>
+          {logo&&<img src={logo} style={{height:46,width:46,objectFit:"contain",filter:"drop-shadow(0 2px 12px rgba(0,0,0,0.7))"}}/>}
+        </div>
+        {!isBottom&&score3}
+        {isBottom&&<div style={{flex:1}}/>}
+        {isBottom&&score3}
+      </div>
+    </div>
+  );}
+
   return(
     <div style={{width:dims.w,height:dims.h,background:primary,position:"relative",fontFamily:font,overflow:"hidden",borderRadius:12}}>
       <BgPhoto photo={photo} primary={primary} opacity={bgOpacity} blur={bgBlur}/>
@@ -365,9 +362,9 @@ function ResultCardBase({data,colors,logo,font,variant,photo,bgOpacity=1,bgBlur=
           {logo&&<img src={logo} style={{height:52,width:52,objectFit:"contain",filter:"drop-shadow(0 2px 12px rgba(0,0,0,0.7))"}}/>}
           <div style={{background:rc,color:"#000",padding:"4px 16px",borderRadius:20,fontSize:12,fontWeight:700,letterSpacing:2,textTransform:"uppercase"}}>{label}</div>
         </div>
-        {!isBottom && scoreContent}
-        {isBottom && <div style={{flex:1}}/>}
-        {isBottom && scoreContent}
+        {!isBottom&&score1}
+        {isBottom&&<div style={{flex:1}}/>}
+        {isBottom&&score1}
       </div>
     </div>
   );
